@@ -4,17 +4,19 @@ Fixed NL format. Runs 4 cells per model (2 domain × 2 specificity).
 Each model runs on its own GPU.
 
 Usage:
-    # Qwen on cuda:0
+    # Qwen on cuda:0 (CUDA_VISIBLE_DEVICES=0 set by framework)
     python -m src.phaseA_runner \
         --model-path /root/autodl-tmp/models/qwen2.5-7b-instruct \
         --device cuda:0 \
         --svg-split medium \
         --output results/phaseA_qwen.json
 
-    # Llama on cuda:1
+    # Llama on cuda:1 (CUDA_VISIBLE_DEVICES=1 set by framework)
+    # NOTE: always use --device cuda:0 because CUDA_VISIBLE_DEVICES
+    # remaps the physical GPU to ordinal 0 inside the process.
     python -m src.phaseA_runner \
         --model-path /root/autodl-tmp/models/llama-3.1-8b-instruct \
-        --device cuda:1 \
+        --device cuda:0 \
         --svg-split medium \
         --output results/phaseA_llama.json
 """
@@ -24,8 +26,13 @@ from __future__ import annotations
 import argparse
 import json
 import logging
+import os
 import re
 import time
+
+# Ensure HF datasets offline mode — set here so we don't depend on
+# shell command-line env-var ordering (see v3/v3r1 EXIT_CODE=127 bug).
+os.environ.setdefault("HF_DATASETS_OFFLINE", "1")
 from pathlib import Path
 
 logging.basicConfig(
