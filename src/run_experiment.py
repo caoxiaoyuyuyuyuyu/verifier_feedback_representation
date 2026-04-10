@@ -26,7 +26,7 @@ class ExperimentConfig:
     """实验全局配置。"""
     # Models
     models: list[str] = field(default_factory=lambda: [
-        "Qwen/Qwen3-Coder-Next-7B",
+        "Qwen/Qwen3.5-9B",
         "meta-llama/Llama-3.1-8B-Instruct",
     ])
 

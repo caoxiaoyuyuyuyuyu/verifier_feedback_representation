@@ -33,7 +33,7 @@ class VLLMRunner:
     """vLLM 推理引擎封装。
 
     Usage:
-        runner = VLLMRunner(model_name="Qwen/Qwen3-Coder-Next-7B")
+        runner = VLLMRunner(model_name="Qwen/Qwen3.5-9B")
         results = runner.generate(prompts, config=GenerationConfig())
         runner.shutdown()
     """
