@@ -2,16 +2,19 @@
 
 核心指标:
   - verifier_pass_rate: 纠错后代码通过 verifier 的比例
-  - FETO (BPE-Jaccard): Feedback-Edit Token Overlap, 衡量 feedback 对 edit 的影响
+  - FETO (BPE-Jaccard): Feedback-Edit Token Overlap
   - attention_concentration: feedback token 位置的注意力集中度
 """
 
 from __future__ import annotations
 
+from collections import Counter, defaultdict
 from dataclasses import dataclass
 from typing import Any
 
 import numpy as np
+
+from ..verifiers.diagnostic import Diagnostic, Severity
 
 
 @dataclass
@@ -20,82 +23,140 @@ class PassRateResult:
     total: int
     passed: int
     rate: float
-    per_rule: dict[str, float]  # rule_id → pass rate
+    per_rule: dict[str, float]
 
 
 @dataclass
 class FETOResult:
     """FETO 分数结果。"""
-    score: float                # 平均 BPE-Jaccard
-    per_sample: list[float]     # 逐样本分数
+    score: float
+    per_sample: list[float]
 
 
 @dataclass
 class AttentionResult:
     """注意力集中度结果。"""
-    concentration: float        # 平均集中度
-    per_layer: list[float]      # 逐层集中度
-    per_sample: list[float]     # 逐样本集中度
+    concentration: float
+    per_layer: list[float]
+    per_sample: list[float]
 
 
 def verifier_pass_rate(
-    diagnostics_before: list[list[Any]],
-    diagnostics_after: list[list[Any]],
+    diagnostics_before: list[list[Diagnostic]],
+    diagnostics_after: list[list[Diagnostic]],
 ) -> PassRateResult:
     """计算纠错前后的 verifier pass rate。
 
-    Pass = 纠错后 diagnostics 中 ERROR severity 数量为 0。
-
-    Args:
-        diagnostics_before: 纠错前每个样本的 Diagnostic 列表。
-        diagnostics_after: 纠错后每个样本的 Diagnostic 列表。
-
-    Returns:
-        PassRateResult，包含总体和逐规则 pass rate。
+    Pass = 纠错后 ERROR severity 数量为 0。
     """
-    # TODO: 统计 ERROR severity diagnostics
-    # TODO: 计算总体 pass rate
-    # TODO: 按 rule_id 分组计算逐规则 pass rate
-    raise NotImplementedError
+    total = len(diagnostics_after)
+    if total == 0:
+        return PassRateResult(total=0, passed=0, rate=0.0, per_rule={})
+
+    passed = 0
+    # Track per-rule: how many samples had this rule_id error before → fixed after
+    rule_before: dict[str, int] = defaultdict(int)
+    rule_fixed: dict[str, int] = defaultdict(int)
+
+    for before, after in zip(diagnostics_before, diagnostics_after):
+        errors_after = [d for d in after if d.severity == Severity.ERROR]
+        if not errors_after:
+            passed += 1
+
+        # Per-rule tracking
+        rules_before = {d.rule_id for d in before if d.severity == Severity.ERROR}
+        rules_after = {d.rule_id for d in after if d.severity == Severity.ERROR}
+        for rule in rules_before:
+            rule_before[rule] += 1
+            if rule not in rules_after:
+                rule_fixed[rule] += 1
+
+    per_rule = {
+        rule: rule_fixed[rule] / count
+        for rule, count in rule_before.items()
+        if count > 0
+    }
+
+    return PassRateResult(
+        total=total,
+        passed=passed,
+        rate=passed / total,
+        per_rule=per_rule,
+    )
 
 
 def feto_score(
     feedback_tokens: list[list[str]],
     edit_tokens: list[list[str]],
 ) -> FETOResult:
-    """计算 FETO (Feedback-Edit Token Overlap) — BPE-Jaccard 相似度。
+    """FETO (Feedback-Edit Token Overlap) — BPE-Jaccard similarity.
 
-    衡量 feedback 中的 token 在 edit diff 中出现的比例。
-    高 FETO = 模型的修改与 feedback 内容高度相关。
-
-    Args:
-        feedback_tokens: 每个样本 feedback 的 BPE token 列表。
-        edit_tokens: 每个样本 code edit diff 的 BPE token 列表。
-
-    Returns:
-        FETOResult，包含平均和逐样本 Jaccard 分数。
+    Jaccard(set(feedback_tokens), set(edit_tokens)) per sample.
     """
-    # TODO: 对每个样本计算 Jaccard(set(feedback), set(edit))
-    # TODO: 汇总平均
-    raise NotImplementedError
+    per_sample = []
+    for fb, ed in zip(feedback_tokens, edit_tokens):
+        fb_set = set(fb)
+        ed_set = set(ed)
+        if not fb_set and not ed_set:
+            per_sample.append(0.0)
+            continue
+        intersection = len(fb_set & ed_set)
+        union = len(fb_set | ed_set)
+        per_sample.append(intersection / union if union > 0 else 0.0)
+
+    avg = sum(per_sample) / len(per_sample) if per_sample else 0.0
+    return FETOResult(score=avg, per_sample=per_sample)
 
 
 def attention_concentration(
     attention_weights: np.ndarray,
     feedback_token_positions: list[list[int]],
 ) -> AttentionResult:
-    """计算 feedback token 位置的注意力集中度。
+    """Feedback token 位置的注意力集中度。
 
-    在生成 edit token 时，模型对 feedback token 位置分配的注意力比例。
+    对每个样本/层，计算 generation tokens 对 feedback positions 的
+    注意力占总注意力的比例。
 
     Args:
-        attention_weights: shape (n_samples, n_layers, n_heads, seq_len, seq_len)
+        attention_weights: (n_samples, n_layers, n_heads, gen_len, seq_len)
+            已提取的 generation token 行的注意力权重。
         feedback_token_positions: 每个样本中 feedback token 的位置索引。
-
-    Returns:
-        AttentionResult，包含平均、逐层、逐样本集中度。
     """
-    # TODO: 提取 generation token 对 feedback positions 的注意力
-    # TODO: 对 heads 取平均，计算 feedback 位置的注意力占比
-    # TODO: 按层聚合
-    raise NotImplementedError
+    n_samples, n_layers, n_heads, gen_len, seq_len = attention_weights.shape
+
+    per_sample = []
+    per_layer_accum = np.zeros(n_layers)
+
+    for i in range(n_samples):
+        positions = feedback_token_positions[i]
+        if not positions or gen_len == 0:
+            per_sample.append(0.0)
+            continue
+
+        # (n_layers, n_heads, gen_len, seq_len)
+        sample_attn = attention_weights[i]
+        # Average over heads: (n_layers, gen_len, seq_len)
+        head_avg = sample_attn.mean(axis=1)
+
+        # Sum attention to feedback positions vs total
+        total_attn = head_avg.sum(axis=-1)  # (n_layers, gen_len)
+        fb_attn = head_avg[:, :, positions].sum(axis=-1)  # (n_layers, gen_len)
+
+        # Concentration per layer: mean over gen tokens
+        layer_conc = np.where(
+            total_attn > 0,
+            fb_attn / total_attn,
+            0.0,
+        ).mean(axis=1)  # (n_layers,)
+
+        per_layer_accum += layer_conc
+        per_sample.append(float(layer_conc.mean()))
+
+    per_layer = (per_layer_accum / max(n_samples, 1)).tolist()
+    avg = sum(per_sample) / len(per_sample) if per_sample else 0.0
+
+    return AttentionResult(
+        concentration=avg,
+        per_layer=per_layer,
+        per_sample=per_sample,
+    )
