@@ -1,0 +1,69 @@
+\appendix
+
+\section{Micro DRR Results}
+\label{app:micro}
+
+Tables~\ref{tab:micro-phaseA} and~\ref{tab:micro-phaseB} report micro DRR (Eq.~\ref{eq:drr-micro}), which pools diagnostic counts across samples before computing the reduction rate. Micro DRR down-weights samples with few diagnostics and up-weights samples with many, complementing the macro (per-sample mean) metric used in the main text.
+
+\begin{table}[h]
+\centering
+\small
+\caption{Phase A micro DRR results. $\Delta_\text{micro}$ = DRR$_\text{micro}$(precise) $-$ DRR$_\text{micro}$(generic).}
+\label{tab:micro-phaseA}
+\begin{tabular}{llrrrr}
+\toprule
+Model & Domain & $n$ & DRR$_\text{micro}$(P) & DRR$_\text{micro}$(G) & $\Delta_\text{micro}$ \\
+\midrule
+Qwen & SVG & 100 & 2.7\% & 16.0\% & $-$13.3\,pp \\
+Qwen & Python & 49 & 67.2\% & 53.7\% & +13.5\,pp \\
+Llama & SVG & 100 & 30.3\% & 36.8\% & $-$6.5\,pp \\
+Llama & Python & 49 & 71.6\% & 68.7\% & +2.9\,pp \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+All four cells show the same directional pattern as macro DRR (Table~\ref{tab:phaseA}): precise feedback improves DRR on Python but reduces it on SVG for both models. The magnitude of the Qwen SVG penalty is smaller under micro ($-$13.3\,pp vs.\ $-$19.9\,pp macro), consistent with the outlier analysis in Section~\ref{sec:results-phaseA}: the macro metric amplifies extreme per-sample values (e.g., sample~\#54), while micro aggregation dilutes them.
+
+\begin{table}[h]
+\centering
+\small
+\caption{Phase B micro DRR results on Python ($n = 49$ per cell). $\Delta_\text{micro}$ = precise $-$ generic.}
+\label{tab:micro-phaseB}
+\begin{tabular}{llrrrr}
+\toprule
+Model & Format & DRR$_\text{micro}$(P) & DRR$_\text{micro}$(G) & $\Delta_\text{micro}$ \\
+\midrule
+Qwen & NL & 67.2\% & 53.7\% & +13.5\,pp \\
+Qwen & raw\_json & 58.2\% & 50.7\% & +7.5\,pp \\
+Qwen & hybrid & 74.6\% & 55.2\% & +19.4\,pp \\
+\midrule
+Llama & NL & 71.6\% & 68.7\% & +2.9\,pp \\
+Llama & raw\_json & 73.1\% & 77.6\% & $-$4.5\,pp \\
+Llama & hybrid & 68.7\% & 74.6\% & $-$5.9\,pp \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Phase B micro results mirror the macro pattern (Table~\ref{tab:phaseB}): Qwen benefits from precise feedback across all three formats (hybrid $>$ NL $>$ raw\_json), while Llama shows a reversed pattern under structured formats (raw\_json and hybrid favour generic). The model-dependent interaction persists under both aggregation methods.
+
+\section{Sensitivity Analysis}
+\label{app:sensitivity}
+
+The parse-error penalty (Eq.~\ref{eq:penalty}) adds a fixed offset of $+10$ to the effective diagnostic count for newly broken samples. Table~\ref{tab:sensitivity} reports Qwen SVG precise DRR$_\text{macro}$---the cell most affected by the penalty due to outlier sample~\#54---under alternative penalty values.
+
+\begin{table}[h]
+\centering
+\small
+\caption{Sensitivity of Qwen SVG precise DRR$_\text{macro}$ to the parse-error penalty threshold. The cell contains $n = 100$ samples, of which 3 are newly broken after correction.}
+\label{tab:sensitivity}
+\begin{tabular}{lrrrrr}
+\toprule
+Penalty & $+5$ & $+8$ & $+10$ (default) & $+15$ & $+20$ \\
+\midrule
+DRR$_\text{macro}$ & $-$1.7\% & $-$2.7\% & $-$3.2\% & $-$4.7\% & $-$6.2\% \\
+$\Delta$ (P$-$G) & $-$18.4\,pp & $-$19.4\,pp & $-$19.9\,pp & $-$21.4\,pp & $-$22.9\,pp \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Across the $[5, 20]$ range, Qwen SVG precise DRR$_\text{macro}$ remains negative and the precise$-$generic gap stays large ($-$18.4 to $-$22.9\,pp). The qualitative conclusion---that generic feedback substantially outperforms precise on Qwen SVG---is robust to the choice of penalty. For all other cells, the number of newly broken samples is $\leq 1$, making the penalty value inconsequential.

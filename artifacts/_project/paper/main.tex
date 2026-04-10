@@ -1,0 +1,44 @@
+\documentclass{article}
+
+% NeurIPS 2025 style
+\usepackage[final]{neurips_2025}
+
+% Standard packages
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage{booktabs}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{microtype}
+\usepackage{xcolor}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{enumitem}
+\usepackage{graphicx}
+
+\title{How Should Verifier Feedback Be Represented?\\A Controlled Study of Format and Specificity Effects\\on LLM Self-Correction}
+
+\author{
+  Anonymous Author(s)
+}
+
+\begin{document}
+
+\maketitle
+
+\input{introduction}  % includes \begin{abstract}...\end{abstract} and \section{Introduction}
+
+\input{related_work}   % \section{Related Work}
+
+\input{method}          % \section{Methodology}
+
+\input{results}         % \section{Results} + \section{Discussion}
+
+\bibliographystyle{plainnat}
+\bibliography{references}
+
+\input{appendix}        % \appendix + Appendix A, B
+
+\end{document}
