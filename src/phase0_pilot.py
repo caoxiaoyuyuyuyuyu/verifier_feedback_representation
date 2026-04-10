@@ -233,8 +233,8 @@ def main():
     parser.add_argument("--output", default="results/phase0_pilot.json",
                         help="Output JSON path")
     parser.add_argument("--n-samples", type=int, default=50)
-    parser.add_argument("--max-tokens", type=int, default=4096)
-    parser.add_argument("--max-model-len", type=int, default=8192)
+    parser.add_argument("--max-tokens", type=int, default=8192)
+    parser.add_argument("--max-model-len", type=int, default=16384)
     parser.add_argument("--svg-split", default="easy")
     parser.add_argument("--device", default="cuda:0")
     args = parser.parse_args()

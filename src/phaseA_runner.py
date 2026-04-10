@@ -256,9 +256,11 @@ def main():
     parser.add_argument("--svg-split", default="medium")
     parser.add_argument("--n-svg", type=int, default=0, help="0 = use all samples")
     parser.add_argument("--n-python", type=int, default=0, help="0 = use all samples")
-    parser.add_argument("--max-tokens", type=int, default=4096)
-    parser.add_argument("--max-model-len", type=int, default=8192)
+    parser.add_argument("--max-tokens", type=int, default=8192)
+    parser.add_argument("--max-model-len", type=int, default=16384)
     parser.add_argument("--output", default="results/phaseA.json")
+    parser.add_argument("--domains", default="svg,python",
+                        help="comma-separated domains to run (e.g. 'svg' for SVG-only rerun)")
     args = parser.parse_args()
 
     _env_sanity_check()
@@ -320,10 +322,15 @@ def main():
         with open(output_path, "w") as f:
             json.dump(summary, f, indent=2, ensure_ascii=False)
 
-    for domain, samples, verifier, code_key in [
+    active_domains = [d.strip() for d in args.domains.split(",")]
+    all_cells = [
         ("svg", svg_samples, svg_verifier, "svg_string"),
         ("python", python_samples, python_verifier, "code"),
-    ]:
+    ]
+    for domain, samples, verifier, code_key in all_cells:
+        if domain not in active_domains:
+            logger.info("=== Skipping domain: %s (not in --domains=%s) ===", domain, args.domains)
+            continue
         for specificity in ["precise", "generic"]:
             cell_key = f"{domain}_{specificity}"
             logger.info("=== Cell: %s (%d samples in split) ===", cell_key, len(samples))
