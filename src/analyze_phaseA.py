@@ -565,13 +565,15 @@ def analyze(qwen_path: str, llama_path: str, output_path: str | None = None):
     if output_path:
         # Convert numpy types for JSON serialization
         def convert(obj):
+            if isinstance(obj, (np.bool_,)):
+                return bool(obj)
             if isinstance(obj, (np.integer,)):
                 return int(obj)
             if isinstance(obj, (np.floating,)):
                 return float(obj)
             if isinstance(obj, np.ndarray):
                 return obj.tolist()
-            return obj
+            raise TypeError(f"Object of type {type(obj)} is not JSON serializable")
 
         with open(output_path, "w") as f:
             json.dump(results, f, indent=2, default=convert)
