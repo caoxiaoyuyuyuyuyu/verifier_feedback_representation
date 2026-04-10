@@ -1,0 +1,162 @@
+\section{Methodology}
+\label{sec:method}
+
+We study how the \emph{representation} of verifier feedback---its surface format and its level of specificity---affects an LLM's ability to self-correct. Our setup holds the underlying verifier fixed and deterministic, so that any downstream difference in correction quality is attributable to how diagnostics are rendered into natural language or structured text, rather than to what the verifier detects.
+
+\subsection{Problem Formulation}
+\label{sec:problem}
+
+Let $x$ denote a task description and $y_0$ an initial model response (code). A \emph{verifier} $V$ is a deterministic function that maps a candidate $y$ to a multiset of diagnostics $D = V(y) = \{d_1, \ldots, d_k\}$, where each diagnostic $d_i$ identifies a discrete defect (a rule violation, a geometric constraint failure, a security anti-pattern, etc.). A \emph{feedback renderer} $R_{f,s}$ parameterised by a format $f \in \mathcal{F}$ and a specificity level $s \in \mathcal{S}$ projects $D$ into a textual feedback message $R_{f,s}(D) \in \Sigma^*$. Given an LLM $\pi_\theta$, the \emph{self-correction} step produces a revised response
+\begin{equation}
+    y_1 \sim \pi_\theta\!\left(\,\cdot \mid x,\, y_0,\, R_{f,s}(V(y_0))\right).
+\end{equation}
+The quantity of interest is the reduction in diagnostics $|V(y_0)| \rightarrow |V(y_1)|$ as a function of $(f,s)$, holding $V$, $\pi_\theta$, $x$, and the decoding procedure fixed. We ask whether and how feedback \emph{specificity} and \emph{format} interact to affect self-correction quality, and whether these effects generalise across models and task domains.
+
+\paragraph{Unified diagnostic schema.}
+To enable apples-to-apples comparison across heterogeneous verifiers (XML/geometric vs.\ Python static analysis), we require every diagnostic to conform to a single schema:
+\begin{center}
+\small
+\begin{tabular}{ll}
+\toprule
+Field & Description \\
+\midrule
+\texttt{rule\_id} & stable identifier of the violated rule \\
+\texttt{severity} & \{\textsc{error}, \textsc{warning}, \textsc{info}\} \\
+\texttt{element\_ids} & affected locations (line numbers, SVG ids) \\
+\texttt{message\_generic} & severity-only description \\
+\texttt{message\_precise} & detailed description with code context \\
+\texttt{metric\_name}, \texttt{metric\_value} & quantitative evidence \\
+\texttt{fix\_direction} & suggested remediation action \\
+\texttt{metadata} & tool-specific payload \\
+\bottomrule
+\end{tabular}
+\end{center}
+This schema decouples the act of \emph{detection} from the act of \emph{presentation}, which is essential for the ablation of Section~\ref{sec:feedback}.
+
+\subsection{Verifier Design}
+\label{sec:verifiers}
+
+We instantiate two verifiers spanning qualitatively different domains.
+
+\paragraph{SVG geometric verifier.}
+\texttt{SVGGeometricVerifier} consumes an SVG string and emits diagnostics along three axes: (i) \emph{XML well-formedness}---parser errors and malformed attributes; (ii) \emph{geometric validity}---coordinate ranges, shape constraints (positive radii, non-degenerate polygons), and viewBox consistency; and (iii) \emph{predicate satisfaction}---task-specific geometric predicates such as ``two circles are externally tangent'' or ``the polygon is convex,'' supplied with the task. Each violation is recorded as a \texttt{Diagnostic} whose \texttt{element\_ids} point to offending SVG elements, whose \texttt{metric\_name} reports the underlying numerical quantity (e.g., centre-to-centre distance minus the sum of radii), and whose \texttt{fix\_direction} names the predicate to re-satisfy. This verifier is built on top of the SVGenius task suite \cite{cao2024svgenius}.
+
+\paragraph{Python static analyser.}
+\texttt{PythonStaticVerifier} wraps two mature off-the-shelf tools: Bandit \cite{bandit2024} for security vulnerabilities and Pylint \cite{pylint2024} for code quality. Raw tool outputs are normalised into the unified schema: Bandit severities \{\textsc{high}, \textsc{medium}, \textsc{low}\} map to \{\textsc{error}, \textsc{warning}, \textsc{info}\} respectively, and Pylint categories \{\textit{error}/\textit{fatal}, \textit{warning}, \textit{convention}/\textit{refactor}\} map similarly. Rule ids are prefixed by tool (e.g., \texttt{B602\_subprocess\_popen\_with\_shell\_equals\_true}) to preserve provenance. \texttt{metric\_value} stores Bandit's confidence score or Pylint's severity weighting. Both tools are invoked in their default configurations; we do not fine-tune rule sets.
+
+Both verifiers are fully deterministic given a fixed tool version. They are treated as black boxes by the LLM: the model never sees the verifier's source code, only its rendered output.
+
+\subsection{Feedback Representation}
+\label{sec:feedback}
+
+The feedback representation is the product of two orthogonal choices.
+
+\paragraph{Format ($f$).}
+We consider three surface formats for rendering the diagnostic list $D$:
+\begin{itemize}
+    \item \textsc{raw\_json}: the list is serialised as a JSON array of objects, one per diagnostic, with field names matching the schema.
+    \item \textsc{nl}: the list is rendered as a bulleted natural-language enumeration, one sentence per diagnostic.
+    \item \textsc{hybrid}: a natural-language summary followed by a JSON block, intended to combine the readability of NL with the machine-parseable structure of JSON.
+\end{itemize}
+In our main experiment, we fix $f = \textsc{nl}$ and isolate the effect of specificity, leaving the full $3 \times 2$ format $\times$ specificity ablation to a follow-up ablation study.
+
+\paragraph{Specificity ($s$).}
+Each diagnostic is rendered at one of two specificity levels:
+\begin{itemize}
+    \item \textsc{generic}: severity tag $+$ \texttt{message\_generic}. No location, no values, no fix hints.
+    \item \textsc{precise}: \texttt{message\_precise} $+$ \texttt{element\_ids} $+$ \texttt{metric\_value} $+$ \texttt{fix\_direction}.
+\end{itemize}
+Critically, both variants originate from the \emph{same} underlying diagnostic, so differences in downstream self-correction cannot be attributed to detecting different issues.
+
+\paragraph{Example.}
+For a single Bandit finding on a call to \texttt{subprocess.call(cmd, shell=True)}, the two renderings are:
+
+\smallskip
+\noindent\fbox{\begin{minipage}{0.95\linewidth}\footnotesize
+\textbf{\textsc{generic}}:\\
+\texttt{[ERROR] subprocess\_popen\_with\_shell\_equals\_true: Use of subprocess with shell=True.}
+\end{minipage}}
+
+\smallskip
+\noindent\fbox{\begin{minipage}{0.95\linewidth}\footnotesize
+\textbf{\textsc{precise}}:\\
+\texttt{[ERROR] Line 5: Use of subprocess call with shell=True identified. Code: `subprocess.call(cmd, shell=True)`. Suggested fix: Fix B602\_subprocess\_popen\_with\_shell\_equals\_true security issue at line 5.}
+\end{minipage}}
+
+\smallskip
+The \textsc{precise} variant reveals \emph{where} the defect lives, \emph{what} the offending expression is, and \emph{how} to begin fixing it---information that the model, by construction, cannot infer from the \textsc{generic} message alone. Figure~\ref{fig:feedback-pipeline} illustrates the full rendering pipeline.
+
+\subsection{Experimental Protocol}
+\label{sec:protocol}
+
+\paragraph{Datasets.}
+We use the medium split of SVGenius \cite{cao2024svgenius} for the geometric domain ($n=100$ tasks) and SecurityEval \cite{siddiq2022securityeval} for the Python security domain ($n=121$ code snippets with known security vulnerabilities, which serve as the initial code $y_0$ to be corrected). After filtering to samples with at least one diagnostic ($b_i > 0$; Section~\ref{sec:metrics}), the effective sample sizes are $n' = 100$ for SVG (all samples contain at least one geometric-predicate warning) and $n' \approx 49$ for Python. The Python attrition is expected: many SecurityEval vulnerability patterns (e.g., insecure deserialization, hardcoded credentials) fall outside the rule coverage of Bandit and Pylint, so the corresponding samples receive zero diagnostics and are excluded.
+
+\paragraph{Models.}
+We evaluate two open-weights instruction-tuned LLMs of comparable scale: Qwen2.5-7B-Instruct \cite{yang2024qwen25} and Llama-3.1-8B-Instruct \cite{grattafiori2024llama3}. Both are served via HuggingFace Transformers with greedy decoding (temperature $0$) to make the correction step reproducible.
+
+\paragraph{Grid.}
+Our main experiment sweeps a $2\times 2 \times 2$ grid of $\{\textsc{precise}, \textsc{generic}\} \times \{\text{Qwen2.5-7B}, \text{Llama-3.1-8B}\} \times \{\text{SVG}, \text{Python}\}$, holding the format at \textsc{nl}. Each of the eight cells corresponds to one independent experimental run.
+
+\paragraph{Per-cell procedure.}
+Algorithm~\ref{alg:cell} summarises the pipeline for a single cell.
+
+\begin{algorithm}[t]
+\small
+\caption{Single cell evaluation}
+\label{alg:cell}
+\begin{algorithmic}[1]
+\Require dataset $\mathcal{D}$, verifier $V$, model $\pi_\theta$, renderer $R_{f,s}$
+\State $\mathcal{D}' \gets \{(x, y_0) \in \mathcal{D} : |V(y_0)| > 0\}$ \Comment{filter}
+\For{each $(x, y_0) \in \mathcal{D}'$}
+    \State $D_{\text{before}} \gets V(y_0)$
+    \State $m \gets R_{f,s}(D_{\text{before}})$ \Comment{render feedback}
+    \State $p \gets \textsc{BuildPrompt}(x, y_0, m)$
+    \State $y_1 \gets \pi_\theta(p)$ \Comment{greedy decode}
+    \State $D_{\text{after}} \gets V(y_1)$
+    \State record $(|D_{\text{before}}|, |D_{\text{after}}|, \textit{parse\_error}_{\text{after}})$
+\EndFor
+\State \Return per-sample diagnostics counts
+\end{algorithmic}
+\end{algorithm}
+
+The correction prompt $p$ concatenates (i) the task description, (ii) the original code, and (iii) the rendered feedback, under a fixed template shared across all cells. No few-shot exemplars are used.
+
+\subsection{Evaluation Metrics}
+\label{sec:metrics}
+
+Our primary headline metric is the \emph{macro diagnostic reduction rate}
+\begin{equation}
+\label{eq:drr-macro}
+    \mathrm{DRR}_{\text{macro}} \;=\; \frac{1}{|\mathcal{D}'|} \sum_{i \in \mathcal{D}'} \left(1 - \frac{\widetilde{a}_i}{\max(b_i,\,1)}\right),
+\end{equation}
+where $b_i = |V(y_0^{(i)})|$ is the pre-correction diagnostic count and $\widetilde{a}_i$ is an \emph{effective} post-correction count defined below. A complementary \emph{micro} aggregate pools counts across samples:
+\begin{equation}
+\label{eq:drr-micro}
+    \mathrm{DRR}_{\text{micro}} \;=\; 1 - \frac{\sum_{i \in \mathcal{D}'} \widetilde{a}_i}{\sum_{i \in \mathcal{D}'} b_i}.
+\end{equation}
+The macro form weights every sample equally and is used for headline comparisons; the micro form is reported as a robustness check against samples with unusually large $b_i$.
+
+\paragraph{Parse-error penalty.}
+A naive use of $a_i = |V(y_1^{(i)})|$ can reward the model for \emph{breaking} its output: a response that is no longer parseable may yield only a single \textit{parse\_error} diagnostic, superficially lowering the count. We therefore define
+\begin{equation}
+\label{eq:penalty}
+\widetilde{a}_i = \begin{cases}
+    \max\!\left(b_i + 10,\; a_i\right) & \text{if sample } i \text{ is newly} \\[-2pt]
+    & \text{a parse\_error after correction,} \\
+    a_i & \text{otherwise.}
+\end{cases}
+\end{equation}
+The penalty $|D_i| + 10$ ensures that newly broken samples always contribute a strongly negative reduction rate, since the effective count exceeds the original by at least 10 diagnostics. The threshold of $10$ is a small integer chosen once and applied uniformly; we do not tune it per cell. In a sensitivity check (Appendix~\ref{app:sensitivity}), we verify that conclusions are robust to penalties in the range $[5, 20]$.
+
+\paragraph{Sample filtering.}
+$\mathcal{D}'$ retains only samples with $b_i > 0$ (any severity), since Eq.~\ref{eq:drr-macro} is ill-defined when $b_i = 0$ and the correction task has no target.
+
+\paragraph{Secondary metrics.}
+For the SVG domain we additionally report: (i) \emph{parse survival rate}, the fraction of corrected samples that still parse as valid XML, and (ii) \emph{predicate fix rate among survivors}, the fraction of parse-surviving samples whose task-specific geometric predicates are satisfied after correction. For the Python domain we report: (i) \emph{pass rate}, the fraction of samples with $a_i = 0$, and (ii) \emph{error reduction rate}, the same quantity as Eq.~\ref{eq:drr-macro} restricted to \textsc{error}-severity diagnostics.
+
+\paragraph{Insufficient-samples sentinel.}
+Any cell with $|\mathcal{D}'| < 30$ after filtering is excluded from headline aggregation and flagged as \textsc{insufficient\_samples}. This guards against headline claims driven by a handful of samples.
+
+\paragraph{Decision criterion for the headline claim.}
+Let $\Delta_c = \mathrm{DRR}_{\text{macro}}(\textsc{precise},c) - \mathrm{DRR}_{\text{macro}}(\textsc{generic},c)$ for each of the $4$ model$\times$domain cells $c$. The headline claim---\emph{precise feedback improves diagnostic reduction by at least $10$ percentage points}---is considered supported if and only if: (a) $\tfrac{1}{4}\sum_c \Delta_c \geq 0.10$, (b) $|\{c : \Delta_c \geq 0.10\}| \geq 3$, and (c) every cell satisfies $|\mathcal{D}'| \geq 30$. All three conditions must hold jointly; violating any of them downgrades the finding from \emph{headline} to \emph{exploratory} in the results section.
