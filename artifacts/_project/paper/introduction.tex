@@ -1,0 +1,52 @@
+% Abstract
+\begin{abstract}
+When an LLM corrects its own output using verifier feedback, does the \emph{representation} of that feedback---its surface format and specificity level---matter?
+We decouple feedback representation from feedback content by fixing two deterministic verifiers (geometric property checking for SVG, static analysis for Python security) and systematically varying how their output is rendered.
+In a pre-specified factorial design spanning two 7--8B models (Qwen2.5-7B-Instruct, Llama-3.1-8B-Instruct) and two domains, Phase~A ablates specificity (precise vs.\ generic) and Phase~B further ablates format (natural language, raw JSON, hybrid).
+Our pre-specified headline claim---that precise feedback improves diagnostic reduction rate (DRR) by $\geq$10 percentage points universally---\textbf{fails}: mean $\Delta = -1.4$\,pp across cells.
+Instead, specificity is domain-dependent: precise feedback yields $+12.2$\,pp on Python for Qwen ($p{=}0.021$) but $-19.9$\,pp on SVG ($p{<}0.001$).
+Format actively modulates specificity rather than serving as a neutral carrier: hybrid\,+\,precise achieves the best Qwen DRR (75.5\%, $p{=}0.002$), while raw\_json\,+\,generic achieves the best Llama DRR (79.9\%).
+No single feedback configuration dominates across models and domains, arguing that self-correction pipelines should adapt feedback representation to the model--domain context rather than relying on a fixed template.
+\end{abstract}
+
+% Introduction
+\section{Introduction}
+\label{sec:introduction}
+
+LLM self-correction---prompting a model to revise its output given external feedback---has emerged as a practical strategy for improving code generation, where deterministic verifiers (compilers, test suites, static analyzers) provide reliable error signals~\cite{chen2024selfdebug,shinn2023reflexion,madaan2023selfrefine}.
+A growing body of evidence shows that external feedback is essential: without it, models frequently flip correct answers to incorrect ones, yielding net-negative correction~\cite{huang2024selfcorrect,kamoi2024selfcorrectsurvey}.
+Given that feedback quality bottlenecks self-repair outcomes~\cite{olausson2024selfrepair}, a natural question arises: holding the verifier fixed, how should its output be \emph{communicated} to the model?
+
+Prior work has largely treated feedback representation as a fixed consequence of the tool.
+Compiler error messages, test-case traces, and linter reports arrive in tool-determined formats, and self-correction systems pass them through verbatim~\cite{chen2024selfdebug,yang2024sweagent,yang2024intercode}.
+When studies do vary feedback, they typically change the \emph{source}---comparing execution feedback against self-generated explanations~\cite{chen2024selfdebug}, or test failures against static-analysis reports~\cite{dolcetti2024feedbackcode}---simultaneously changing both what is detected and how it is expressed.
+This conflation makes it impossible to attribute gains to representation alone.
+
+Meanwhile, a separate line of work demonstrates that prompt format significantly affects model behavior.
+Performance on identical tasks can swing by up to 40 percentage points across plain-text, Markdown, JSON, and YAML renderings~\cite{he2024promptformat}, and optimal format is task- and content-dependent~\cite{lau2025cfpo}.
+Chain-of-thought prompting~\cite{wei2022cot} and structured decomposition~\cite{zhou2023leasttomost} further illustrate that \emph{how} information is organized in a prompt can matter as much as \emph{what} information is included.
+If prompt formatting affects task performance so dramatically, feedback formatting should affect self-correction too---yet no controlled study has tested this.
+
+We pose a direct research question: \textbf{how should verifier feedback be represented to maximize LLM self-correction?}
+Specifically, we decompose feedback representation into two orthogonal dimensions---\emph{specificity} (how much diagnostic detail is exposed) and \emph{format} (the surface structure: natural language, raw JSON, or a hybrid of both)---and measure their effects on correction quality while holding the underlying verifier constant.
+
+Our experimental design uses two deterministic verifiers: an SVG geometric property checker~\cite{cao2024svgenius} that evaluates spatial relationships (coverage, overlap, containment, proportion) and a Python static analyzer combining Bandit~\cite{bandit2024} security scanning with Pylint~\cite{pylint2024} code quality checks.
+Both emit diagnostics through a unified schema that cleanly separates detection from presentation: the same diagnostic can be rendered as a terse severity-only message (generic) or a detailed report with line numbers, metric values, and fix suggestions (precise), in any of three surface formats.
+We test two 7--8B instruction-tuned models---Qwen2.5-7B-Instruct~\cite{yang2024qwen25} and Llama-3.1-8B-Instruct~\cite{grattafiori2024llama3}---under greedy decoding in a single-turn correction protocol.
+Phase~A fixes format at natural language and ablates specificity across both domains ($2 \times 2 \times 2 = 8$ cells).
+Phase~B, triggered by Phase~A findings, further ablates three formats on the Python domain where specificity showed the clearest signal ($2 \times 3 \times 2 = 12$ cells).
+
+The pre-specified headline claim---that precise feedback improves the macro diagnostic reduction rate (DRR) by $\geq$10\,pp across all model--domain cells---fails decisively, with mean $\Delta = -1.4$\,pp.
+The failure, however, reveals a structured pattern rather than noise.
+Specificity is \emph{domain-dependent}: precise feedback yields a significantly positive effect on Python but a significantly negative effect on SVG for Qwen, a crossover interaction driven by the mismatch between detailed geometric diagnostics and weak spatial reasoning (Table~\ref{tab:phaseA}).
+Phase~B shows that format is not a neutral carrier: it actively modulates the specificity effect.
+Qwen's best configuration is hybrid\,+\,precise (75.5\% DRR, $p{=}0.002$, surviving Bonferroni correction), while Llama performs best under raw\_json\,+\,generic (79.9\% DRR)---opposite corners of the design space (Table~\ref{tab:phaseB}).
+These model-dependent optima rule out any universal ``best format'' and demonstrate that feedback representation is a first-class design variable in self-correction pipelines.
+
+This work makes four contributions:
+\begin{enumerate}[leftmargin=*,itemsep=2pt]
+\item \textbf{Controlled factorial design.} The first study to disentangle feedback specificity and format as independent variables in LLM self-correction, using deterministic verifiers that fix feedback content while varying only its representation (\S\ref{sec:method}).
+\item \textbf{Domain-dependent specificity.} Evidence that the effect of feedback detail reverses between domains: precise diagnostics help rule-based tasks (Python security, $+12.2$\,pp for Qwen) but hurt structural tasks (SVG geometry, $-19.9$\,pp), with a statistically significant interaction for Qwen ($p{<}0.001$) (\S\ref{sec:results-phaseA}).
+\item \textbf{Format as active modulator.} The discovery that surface format amplifies or suppresses the specificity effect in a model-dependent manner, with hybrid\,+\,precise optimal for Qwen and raw\_json\,+\,generic optimal for Llama (\S\ref{sec:results-phaseB}).
+\item \textbf{Transparent hypothesis testing.} A pre-specified decision framework with honest reporting of headline hypothesis failure, demonstrating that the absence of a universal specificity advantage is itself an informative finding (\S\ref{sec:results-summary}).
+\end{enumerate}

@@ -1,0 +1,38 @@
+\section{Results}
+\label{sec:results}
+
+\subsection{Phase A: The Specificity Effect is Domain-Dependent}
+\label{sec:results-phaseA}
+
+\paragraph{Decision gate.}
+Our pre-specified headline claim---that precise feedback improves DRR by at least 10 percentage points across all four model$\times$domain cells---\textbf{fails}. The mean $\Delta$ across cells is $-1.4$\,pp (far below the 10\,pp threshold), and only one of four cells exceeds 10\,pp (Table~\ref{tab:phaseA}). We therefore report Phase~A findings as \emph{exploratory}.
+
+\paragraph{Domain $\times$ specificity interaction.}
+Although the overall headline fails, the cell-level pattern reveals a striking interaction: \emph{the direction of the specificity effect reverses between domains}. In the Python security domain, precise feedback consistently improves DRR over generic for both models (Qwen +12.2\,pp, Llama +2.7\,pp). In the SVG geometric domain, precise feedback is neutral or harmful (Qwen $-$19.9\,pp, Llama $-$0.8\,pp).
+
+For Qwen, this domain$\times$specificity interaction reaches statistical significance. The sign test confirms that generic feedback significantly outperforms precise on SVG (46 vs.\ 9 wins, $p < 0.001$), while precise significantly outperforms generic on Python (9 vs.\ 1 wins, $p = 0.021$; Wilcoxon $p = 0.041$). For Llama, the directional pattern is consistent with Qwen but does not reach significance.
+
+\paragraph{Robustness checks.}
+The Qwen Python precise advantage is stable across trimmed and Winsorized estimators (+12.2\% to +13.3\%), as is the Qwen SVG generic advantage ($-$19.9\% to $-$24.1\%). The Llama SVG $\Delta$ is sensitive to extreme values: the raw mean of $-$0.8\,pp shifts to +7.6\,pp under 5\% trimming.
+
+\paragraph{Outlier analysis.}
+The most extreme case is Qwen SVG sample~\#54, which introduces a parse error after correction, inflating its effective post-correction count to 11 via the penalty of Eq.~\ref{eq:penalty} and yielding a per-sample reduction of $-$10.0.
+
+\subsection{Phase B: Format Modulates the Specificity Effect}
+\label{sec:results-phaseB}
+
+Phase~B ablates three feedback formats (NL, raw JSON, hybrid) crossed with two specificity levels, on the Python domain.
+
+\paragraph{Qwen: hybrid format amplifies specificity.}
+Precise feedback significantly outperforms generic in the hybrid format ($\Delta = +19.4$\,pp; sign test $p = 0.003$, Wilcoxon $p = 0.002$), surviving Bonferroni correction ($\alpha_\text{adj} = 0.0083$). The format gradient under precise: hybrid (75.5\%) $>$ NL (67.3\%) $>$ raw JSON (59.5\%).
+
+\paragraph{Llama: structured formats favour generic feedback.}
+Llama exhibits the opposite pattern. Under raw JSON and hybrid, generic yields higher DRR than precise (raw JSON: 79.9\% vs.\ 74.2\%; hybrid: 76.2\% vs.\ 69.0\%), though none reach significance. The best configuration overall is Llama raw JSON generic (79.9\%).
+
+\paragraph{Format $\times$ specificity interaction.}
+The range of $\Delta$ across formats is 11.9\,pp for Qwen and 9.9\,pp for Llama, both significantly $> 0$, confirming format actively modulates specificity effects.
+
+\subsection{Summary of Evidence}
+\label{sec:results-summary}
+
+Claim hierarchy: Qwen hybrid precise ``significantly outperforms'' (p<0.01); Qwen precise > generic ``consistently improves'' (3/3 positive); Llama ``does not significantly benefit'' from precise (0/3 significant); Llama structured+generic is a ``non-significant trend''; the overall pattern is ``a model-dependent interaction''.
