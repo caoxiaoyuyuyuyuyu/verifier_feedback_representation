@@ -80,6 +80,7 @@ def run_pilot(args: argparse.Namespace) -> dict:
         model_name=args.model_path,
         gpu_memory_utilization=0.85,
         max_model_len=args.max_model_len,
+        device=args.device,
     )
 
     gen_config = GenerationConfig(
@@ -234,7 +235,8 @@ def main():
     parser.add_argument("--n-samples", type=int, default=50)
     parser.add_argument("--max-tokens", type=int, default=4096)
     parser.add_argument("--max-model-len", type=int, default=8192)
-    parser.add_argument("--svg-split", default="test")
+    parser.add_argument("--svg-split", default="easy")
+    parser.add_argument("--device", default="cuda:0")
     args = parser.parse_args()
     run_pilot(args)
 
