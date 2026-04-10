@@ -488,6 +488,79 @@ def analyze(qwen_path: str, llama_path: str, output_path: str | None = None):
     except Exception as e:
         print(f"  ERROR: {e}")
 
+    # ── 8. Sign test + Wilcoxon signed-rank test ──
+    print(f"\n{'='*80}")
+    print("SIGN TEST + WILCOXON SIGNED-RANK TEST (paired per-sample)")
+    print("=" * 80)
+
+    from scipy.stats import wilcoxon, binomtest
+
+    results["paired_tests"] = {}
+    for model_name, data in model_data.items():
+        for domain in ["svg", "python"]:
+            p_cell = data["cells"].get(f"{domain}_precise", {})
+            g_cell = data["cells"].get(f"{domain}_generic", {})
+            key = f"{model_name}_{domain}"
+
+            if (p_cell.get("status") != "OK" or g_cell.get("status") != "OK"
+                    or "per_sample_reduction" not in p_cell
+                    or "per_sample_reduction" not in g_cell):
+                print(f"\n  {key}: SKIPPED (missing data)")
+                continue
+
+            p_vals = np.array(p_cell["per_sample_reduction"])
+            g_vals = np.array(g_cell["per_sample_reduction"])
+            n = min(len(p_vals), len(g_vals))
+            p_vals, g_vals = p_vals[:n], g_vals[:n]
+            diffs = p_vals - g_vals
+
+            # Sign test
+            n_pos = int(np.sum(diffs > 0))
+            n_neg = int(np.sum(diffs < 0))
+            n_zero = int(np.sum(diffs == 0))
+            n_nonzero = n_pos + n_neg
+            if n_nonzero > 0:
+                sign_result = binomtest(n_pos, n_nonzero, 0.5, alternative='two-sided')
+                sign_p = sign_result.pvalue
+            else:
+                sign_p = 1.0
+
+            # Wilcoxon signed-rank test (two-sided)
+            nonzero_diffs = diffs[diffs != 0]
+            if len(nonzero_diffs) >= 10:
+                wilcox_stat, wilcox_p = wilcoxon(nonzero_diffs, alternative='two-sided')
+            else:
+                wilcox_stat, wilcox_p = float('nan'), float('nan')
+
+            test_result = {
+                "n": n,
+                "sign_test": {
+                    "n_precise_better": n_pos,
+                    "n_generic_better": n_neg,
+                    "n_tied": n_zero,
+                    "p_value": float(sign_p),
+                    "significant_05": sign_p < 0.05,
+                },
+                "wilcoxon": {
+                    "statistic": float(wilcox_stat),
+                    "p_value": float(wilcox_p),
+                    "significant_05": wilcox_p < 0.05 if not np.isnan(wilcox_p) else False,
+                },
+                "median_diff": float(np.median(diffs)),
+                "mean_diff": float(np.mean(diffs)),
+            }
+            results["paired_tests"][key] = test_result
+
+            print(f"\n  {key} (n={n}):")
+            print(f"    Sign test: precise>{n_pos}, generic>{n_neg}, tied={n_zero}, p={sign_p:.4f}"
+                  f" {'*' if sign_p < 0.05 else ''}")
+            if not np.isnan(wilcox_p):
+                print(f"    Wilcoxon:  W={wilcox_stat:.0f}, p={wilcox_p:.4f}"
+                      f" {'*' if wilcox_p < 0.05 else ''}")
+            else:
+                print(f"    Wilcoxon:  SKIPPED (n_nonzero={len(nonzero_diffs)} < 10)")
+            print(f"    Median Δ={np.median(diffs):+.4f}, Mean Δ={np.mean(diffs):+.4f}")
+
     # ── Save JSON ──
     if output_path:
         # Convert numpy types for JSON serialization
