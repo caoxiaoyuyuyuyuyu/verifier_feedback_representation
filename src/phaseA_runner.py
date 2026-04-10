@@ -261,6 +261,8 @@ def main():
     parser.add_argument("--output", default="results/phaseA.json")
     parser.add_argument("--domains", default="svg,python",
                         help="comma-separated domains to run (e.g. 'svg' for SVG-only rerun)")
+    parser.add_argument("--min-samples", type=int, default=30,
+                        help="minimum filtered samples to run a cell (default 30)")
     args = parser.parse_args()
 
     _env_sanity_check()
@@ -334,7 +336,8 @@ def main():
         for specificity in ["precise", "generic"]:
             cell_key = f"{domain}_{specificity}"
             logger.info("=== Cell: %s (%d samples in split) ===", cell_key, len(samples))
-            cell = run_cell(runner, gen_config, samples, verifier, domain, specificity, code_key)
+            cell = run_cell(runner, gen_config, samples, verifier, domain, specificity, code_key,
+                           min_samples=args.min_samples)
             results[cell_key] = cell
             _dump()  # persist after every cell (D015 incremental dump)
 
