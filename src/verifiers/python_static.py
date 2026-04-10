@@ -9,12 +9,22 @@ from __future__ import annotations
 import json
 import logging
 import subprocess
+import sys
 import tempfile
 from pathlib import Path
 
 from .diagnostic import Diagnostic, Severity
 
 logger = logging.getLogger(__name__)
+
+
+def _tool_path(name: str) -> str:
+    """Derive absolute path for bandit/pylint from the running Python's venv."""
+    bin_dir = Path(sys.executable).resolve().parent
+    candidate = bin_dir / name
+    if candidate.exists():
+        return str(candidate)
+    return name  # fallback to PATH lookup
 
 _BANDIT_SEVERITY_MAP = {
     "HIGH": Severity.ERROR,
@@ -75,7 +85,7 @@ class PythonStaticVerifier:
 
         try:
             result = subprocess.run(
-                ["bandit", "-f", "json", "-q", tmp_path],
+                [_tool_path("bandit"), "-f", "json", "-q", tmp_path],
                 capture_output=True, text=True, timeout=30,
             )
             # Bandit returns non-zero when it finds issues
@@ -143,7 +153,7 @@ class PythonStaticVerifier:
             f.write(code)
             tmp_path = f.name
 
-        cmd = ["pylint", "--output-format=json2", "--disable=all"]
+        cmd = [_tool_path("pylint"), "--output-format=json2", "--disable=all"]
 
         if self.pylint_checks:
             cmd.append(f"--enable={','.join(self.pylint_checks)}")

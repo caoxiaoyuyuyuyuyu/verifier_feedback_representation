@@ -101,6 +101,13 @@ class VLLMRunner:
                 trust_remote_code=False,
             )
             self._model.eval()
+            # D015 Step 6: clear generation_config sampling params to suppress
+            # "temperature/top_p/top_k will be ignored" warnings when do_sample=False.
+            gc = getattr(self._model, "generation_config", None)
+            if gc is not None:
+                gc.temperature = None
+                gc.top_p = None
+                gc.top_k = None
             logger.info("transformers engine ready in %.1fs", time.time() - t0)
 
         elif self.backend == "vllm":
