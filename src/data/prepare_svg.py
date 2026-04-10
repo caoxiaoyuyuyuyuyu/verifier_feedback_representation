@@ -45,9 +45,11 @@ def load_svg_dataset(
     n_samples: int = 300,
     seed: int = 42,
     svg_column: str = "svg_code",
-    task_column: str = "filename",
 ) -> list[SVGSample]:
     """从 HuggingFace 加载 SVGenius 数据集。
+
+    SVGenius 没有 task description 列，task_description 基于 difficulty 生成。
+    filename 列保留在 metadata 中用于追溯样本来源。
 
     Args:
         dataset_name: HF 数据集名称。
@@ -55,7 +57,6 @@ def load_svg_dataset(
         n_samples: 采样数量。
         seed: 采样随机种子。
         svg_column: SVG 内容所在列名。
-        task_column: 任务描述所在列名。
 
     Returns:
         SVGSample 列表。
@@ -73,12 +74,11 @@ def load_svg_dataset(
     samples = []
     for i, row in enumerate(ds):
         svg = row.get(svg_column, "") or ""
-        task = row.get(task_column, "") or ""
-        if not task:
-            task = f"Repair the following SVG (difficulty: {row.get('difficulty', 'unknown')})"
+        difficulty = row.get("difficulty", "unknown")
+        task = f"Repair the following SVG code (difficulty: {difficulty})"
         sample_id = row.get("id", f"svg_{i:04d}")
         metadata = {k: v for k, v in row.items()
-                    if k not in {svg_column, task_column, "id"}}
+                    if k not in {svg_column, "id"}}
         samples.append(SVGSample(
             sample_id=str(sample_id),
             svg_string=svg,
