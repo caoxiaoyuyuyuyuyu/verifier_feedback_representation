@@ -46,7 +46,7 @@ These model-dependent optima rule out any universal ``best format'' and demonstr
 This work makes four contributions:
 \begin{enumerate}[leftmargin=*,itemsep=2pt]
 \item \textbf{Controlled factorial design.} The first study to disentangle feedback specificity and format as independent variables in LLM self-correction, using deterministic verifiers that fix feedback content while varying only its representation (\S\ref{sec:method}).
-\item \textbf{Domain-dependent specificity.} Evidence that the effect of feedback detail reverses between domains: precise diagnostics help rule-based tasks (Python security, $+12.2$\,pp for Qwen) but hurt structural tasks (SVG geometry, $-19.9$\,pp), with a statistically significant interaction for Qwen ($p{<}0.001$) (\S\ref{sec:results-phaseA}).
+\item \textbf{Domain-dependent specificity.} Evidence that the effect of feedback detail reverses between domains: precise diagnostics help rule-based tasks (Python security, $+12.2$\,pp for Qwen) but hurt structural tasks (SVG geometry, $-19.9$\,pp), with opposing directions of significance suggesting a domain$\times$specificity interaction for Qwen (\S\ref{sec:results-phaseA}).
 \item \textbf{Format as active modulator.} The discovery that surface format amplifies or suppresses the specificity effect in a model-dependent manner, with hybrid\,+\,precise optimal for Qwen and raw\_json\,+\,generic optimal for Llama (\S\ref{sec:results-phaseB}).
 \item \textbf{Transparent hypothesis testing.} A pre-specified decision framework with honest reporting of headline hypothesis failure, demonstrating that the absence of a universal specificity advantage is itself an informative finding (\S\ref{sec:results-summary}).
 \end{enumerate}
