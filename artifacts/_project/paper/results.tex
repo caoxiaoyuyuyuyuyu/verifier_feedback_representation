@@ -31,28 +31,8 @@ Although the overall headline fails, the cell-level pattern reveals a striking i
 
 For Qwen, the cell-level paired tests support this interaction: the sign test confirms that generic feedback significantly outperforms precise on SVG (46 vs.\ 9 wins, $p < 0.001$), while precise significantly outperforms generic on Python (9 vs.\ 1 wins, $p = 0.021$; Wilcoxon $p = 0.041$). The opposing directions of significance across domains suggest a domain$\times$specificity interaction, though we note that these are cell-level tests rather than a formal interaction test. For Llama, the directional pattern is consistent with Qwen but does not reach significance, likely due to Llama's stronger baseline self-correction ability on SVG (40.6\% vs.\ Qwen's $-$3.2\%), which compresses the room for differential effects.
 
-\paragraph{Robustness checks.}
-Table~\ref{tab:robustness} reports trimmed and Winsorized mean estimates. The Qwen Python precise advantage is stable across all three estimators (+12.2\% to +13.3\%), as is the Qwen SVG generic advantage ($-$19.9\% to $-$24.1\%). The Llama SVG $\Delta$ is sensitive to extreme values: the raw mean of $-$0.8\,pp shifts to +7.6\,pp under 5\% trimming, indicating that a small number of outlier samples dominate this cell.
-
-\begin{table}[t]
-\centering
-\small
-\caption{Robustness of precise$-$generic $\Delta$ to outlier-resistant estimators. Trim and Winsor at 5\%.}
-\label{tab:robustness}
-\begin{tabular}{lrrr}
-\toprule
-Cell & $\Delta_\text{mean}$ & $\Delta_\text{trim}$ & $\Delta_\text{winsor}$ \\
-\midrule
-Qwen SVG & $-$19.9\,pp & $-$24.0\,pp & $-$24.1\,pp \\
-Qwen Python & +12.2\,pp & +13.3\,pp & +12.2\,pp \\
-Llama SVG & $-$0.8\,pp & +7.6\,pp & +6.9\,pp \\
-Llama Python & +2.7\,pp & +3.0\,pp & +2.7\,pp \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\paragraph{Outlier analysis.}
-The most extreme individual case is Qwen SVG sample~\#54, which has 1 diagnostic before correction but introduces a parse error after correction (newly broken), inflating its effective post-correction count to 11 via the penalty of Eq.~\ref{eq:penalty}. This yields a per-sample reduction of $-$10.0, heavily dragging Qwen SVG precise's macro mean negative. The sample's output was truncated at the 8192-token limit (token count = 8192), suggesting that the model attempted a verbose SVG rewrite that exceeded the generation budget. Such cases are characteristic of the SVG domain, where geometric code generation is inherently longer than Python snippet correction.
+\paragraph{Robustness and outliers.}
+Trimmed and Winsorized estimates confirm that the Qwen effects are stable (Appendix~\ref{app:robustness}). The Llama SVG $\Delta$ is sensitive to extreme values ($-$0.8\,pp raw vs.\ $+$7.6\,pp trimmed), and Qwen SVG precise is dragged negative by a single outlier (sample~\#54, truncated at 8192 tokens, per-sample reduction $= -10.0$).
 
 \subsection{Phase B: Format Modulates the Specificity Effect}
 \label{sec:results-phaseB}
