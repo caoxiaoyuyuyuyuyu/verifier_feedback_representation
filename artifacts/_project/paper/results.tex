@@ -24,6 +24,8 @@ Llama & Python & 49 & 73.1\% & 70.4\% & +2.7\,pp & 0.625 \\
 \end{tabular}
 \end{table}
 
+Micro DRR results follow the same directional pattern as macro across all eight cells (see Appendix~\ref{app:micro}).
+
 \paragraph{Domain $\times$ specificity interaction.}
 Although the overall headline fails, the cell-level pattern reveals a striking interaction: \emph{the direction of the specificity effect reverses between domains}. In the Python security domain, precise feedback consistently improves DRR over generic for both models (Qwen +12.2\,pp, Llama +2.7\,pp). In the SVG geometric domain, precise feedback is neutral or harmful (Qwen $-$19.9\,pp, Llama $-$0.8\,pp).
 
@@ -138,22 +140,22 @@ Model-dependent interaction & opposite optima & ``we observe a model-dependent i
 
 The Python security domain is characterised by \emph{rule-based} diagnostics: each finding identifies a specific anti-pattern (e.g., \texttt{subprocess} with \texttt{shell=True}) at a precise code location, and the corresponding fix is typically a localised substitution. Precise feedback maps directly onto these atomic edits, giving the model an unambiguous corrective signal. Generic feedback, by contrast, names the rule but omits the location and fix direction, forcing the model to re-discover where the problem lies.
 
-In the SVG geometric domain, diagnostics are \emph{structural}: a predicate failure (``circles are not externally tangent'') implicates global relationships between multiple elements, and the fix often requires coordinated adjustments to several attributes (centres, radii, viewBox). Precise feedback still localises the failure to specific element IDs and reports metric values, but the model must reason about multi-element geometry to translate this information into a valid edit. For Qwen---whose SVG correction ability is near zero (DRR $= -3.2$\%)---the additional precise details may overwhelm the model's limited geometric reasoning capacity, producing responses that are longer (token count at the 8192 limit) but no more correct.
+In the SVG geometric domain, diagnostics are \emph{structural}: a predicate failure (``circles are not externally tangent'') implicates global relationships between multiple elements, and the fix often requires coordinated adjustments to several attributes (centres, radii, viewBox). Precise feedback still localises the failure to specific element IDs and reports metric values, but the model must reason about multi-element geometry to translate this information into a valid edit. For Qwen---whose SVG correction under precise feedback is near zero (DRR$_\text{macro}$ $= -3.2$\%, compared to 16.7\% under generic)---the additional precise details may overwhelm the model's geometric reasoning capacity, producing responses that are longer but no more correct.
 
 \subsection{Why Hybrid Amplifies Specificity for Qwen but Not Llama}
 
-The hybrid format provides diagnostic information twice: once as a natural-language narrative and once as a structured JSON block. For Qwen, this redundancy appears to reinforce the corrective signal, enabling the model to cross-reference the human-readable description with the machine-parseable fields. The result is the strongest effect we observe: hybrid precise achieves 75.5\% DRR, 8.2\,pp above NL precise and 16.0\,pp above raw JSON precise.
+The hybrid format provides diagnostic information twice: once as a natural-language narrative and once as a structured JSON block. For Qwen, this dual encoding is associated with the strongest effect we observe: hybrid precise achieves 75.5\% DRR, 8.2\,pp above NL precise and 16.0\,pp above raw JSON precise.
 
-For Llama, the same redundancy does not help. Llama's stronger baseline self-correction (NL generic already at 70.4\% vs.\ Qwen's 55.1\%) suggests that the model requires less external guidance. When presented with hybrid precise feedback---the most information-dense representation---Llama's DRR \emph{drops} to 69.0\%, below every other Llama configuration. We hypothesise that Llama's instruction-following behaviour is disrupted by excessively detailed feedback: rather than selectively attending to the most actionable fields, the model may attempt to address every piece of information, leading to suboptimal edits.
+The precise mechanism by which hybrid format amplifies specificity for Qwen remains unclear. One hypothesis is that the redundant encoding (NL + JSON) provides two complementary access paths to the same information, which benefits models that struggle with structured input alone. However, we cannot distinguish this from alternative explanations (e.g., increased prompt length per se, or formatting cues that prime different decoding behaviours) without ablating the hybrid components independently. We leave mechanistic investigation to future work.
 
-This interpretation is consistent with recent observations that larger or better-trained models can exhibit \emph{prompt sensitivity} where additional context degrades rather than improves performance \cite{shi2023large}.
+For Llama, the same redundancy does not help. Llama's higher baseline DRR (NL generic 70.4\% vs.\ Qwen's 55.1\%) suggests less room for improvement from external guidance. When presented with hybrid precise feedback---the most information-dense representation---Llama's DRR \emph{drops} to 69.0\%, below every other Llama configuration. This is consistent with observations that additional prompt context can degrade performance in some settings \cite{shi2023large}, though the mechanism in our case may differ.
 
 \subsection{Practical Implications}
 
 Our results carry a clear practical message: \textbf{there is no one-size-fits-all feedback representation for LLM self-correction}. A system designer who couples a deterministic verifier with an LLM corrector must consider:
 
 \begin{enumerate}
-    \item \textbf{Model capability.} Weaker models (Qwen) benefit from maximum feedback specificity and the hybrid format, while stronger models (Llama) perform best with generic feedback in a structured format.
+    \item \textbf{Model identity.} Qwen benefits from maximum feedback specificity and the hybrid format, while Llama performs best with generic feedback in a structured format. With only two models of similar scale (7B/8B), we cannot attribute this difference to a single axis such as ``capability''; training data composition, instruction-tuning procedure, and architecture may all contribute.
     \item \textbf{Task domain.} Precise feedback helps for rule-based tasks (Python security) but is neutral or harmful for structural tasks (SVG geometry), at least for models with limited domain-specific reasoning.
     \item \textbf{Format choice.} Format is not a neutral vehicle---it actively modulates the specificity effect. The interaction is model-dependent, ruling out simple heuristics like ``always use the most detailed format.''
 \end{enumerate}
@@ -170,6 +172,8 @@ Several limitations constrain the generalisability of our findings.
     \item \textbf{Domain coverage.} Phase~A covers two domains (SVG, Python), but the format ablation (Phase~B) was conducted on the Python domain only. Whether the format $\times$ specificity interaction generalises to SVG or other structural domains remains open.
     \item \textbf{Single correction round.} Our protocol applies one round of correction. Multi-turn feedback may exhibit different dynamics, particularly for the SVG domain where iterative refinement could help models that fail in a single pass.
     \item \textbf{Deterministic verifiers only.} We hold the verifier fixed and deterministic. Stochastic verifiers (e.g., LLM-as-judge) would introduce additional variance and are outside our scope.
+    \item \textbf{Greedy decoding.} All experiments use temperature~0 for reproducibility. Stochastic decoding may yield different feedback-representation dynamics.
+    \item \textbf{Training data confound.} Qwen and Llama differ in training data composition. The observed model-dependent interaction may partially reflect training-data-specific adaptation rather than model capability per se.
 \end{itemize}
 
 \subsection{Future Work}
