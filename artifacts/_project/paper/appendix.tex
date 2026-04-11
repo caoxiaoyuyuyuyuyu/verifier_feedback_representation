@@ -49,24 +49,30 @@ Phase B micro results mirror the macro pattern (Table~\ref{tab:phaseB}): Qwen be
 \section{Sensitivity Analysis}
 \label{app:sensitivity}
 
-The parse-error penalty (Eq.~\ref{eq:penalty}) adds a fixed offset of $+10$ to the effective diagnostic count for newly broken samples. Table~\ref{tab:sensitivity} reports Qwen SVG precise DRR$_\text{macro}$---the cell most affected by the penalty due to outlier sample~\#54---under alternative penalty values.
+The parse-error penalty (Eq.~\ref{eq:penalty}) adds a fixed offset of $+10$ to the effective diagnostic count for newly broken samples. Table~\ref{tab:sensitivity} reports both Qwen SVG precise and generic DRR$_\text{macro}$ under alternative penalty values, including penalty${}=0$ (no penalty at all). Both cells contain 3 newly broken samples each (precise: \#22, \#51, \#54; generic: \#22, \#54, \#76), so the penalty affects both conditions.
 
 \begin{table}[h]
 \centering
 \small
-\caption{Sensitivity of Qwen SVG precise DRR$_\text{macro}$ to the parse-error penalty threshold. The cell contains $n = 100$ samples, of which 3 are newly broken after correction.}
+\caption{Sensitivity of Qwen SVG DRR$_\text{macro}$ and $\Delta$ (precise$-$generic) to the parse-error penalty threshold ($n = 100$). ``excl \#54'' removes the most extreme outlier (1 diagnostic before correction, newly broken in both conditions).}
 \label{tab:sensitivity}
-\begin{tabular}{lrrrrr}
+\setlength{\tabcolsep}{5pt}
+\begin{tabular}{lrrrr}
 \toprule
-Penalty & $+5$ & $+8$ & $+10$ (default) & $+15$ & $+20$ \\
+Condition & DRR(P) & DRR(G) & $\Delta$ \\
 \midrule
-DRR$_\text{macro}$ & $-$1.7\% & $-$2.7\% & $-$3.2\% & $-$4.7\% & $-$6.2\% \\
-$\Delta$ (P$-$G) & $-$18.4\,pp & $-$19.4\,pp & $-$19.9\,pp & $-$21.4\,pp & $-$22.9\,pp \\
+penalty $= 0$, all samples & 9.3\% & 30.8\% & $-$21.4\,pp \\
+penalty $= 5$, all samples & 2.1\% & 22.8\% & $-$20.7\,pp \\
+penalty $= 10$ (default), all & $-$3.2\% & 16.7\% & $-$19.9\,pp \\
+penalty $= 20$, all samples & $-$13.8\% & 4.4\% & $-$18.1\,pp \\
+\midrule
+penalty $= 0$, excl \#54 & 9.4\% & 31.1\% & $-$21.7\,pp \\
+penalty $= 10$, excl \#54 & 6.9\% & 27.0\% & $-$20.1\,pp \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-Across the $[5, 20]$ range, Qwen SVG precise DRR$_\text{macro}$ remains negative and the precise$-$generic gap stays large ($-$18.4 to $-$22.9\,pp). The qualitative conclusion---that generic feedback substantially outperforms precise on Qwen SVG---is robust to the choice of penalty. For all other cells, the number of newly broken samples is $\leq 1$, making the penalty value inconsequential.
+The precise$-$generic gap $\Delta$ remains large and negative ($-$18.1 to $-$21.7\,pp) across \emph{all} penalty settings and with or without sample~\#54. Removing the penalty entirely (penalty${}=0$) \emph{widens} the gap from $-$19.9\,pp to $-$21.4\,pp, because the penalty penalises precise slightly more than generic (precise-only newly broken sample~\#51 has $b_i = 39$, contributing a larger penalty term). The qualitative conclusion---that generic feedback substantially outperforms precise on Qwen SVG---is robust to the penalty mechanism and is not an artifact of outlier handling. For all other Phase~A cells, the number of newly broken samples is $\leq 1$, making the penalty value inconsequential.
 
 \section{Robustness Checks and Outlier Analysis}
 \label{app:robustness}
