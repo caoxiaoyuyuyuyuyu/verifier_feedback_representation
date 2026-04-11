@@ -270,6 +270,10 @@ def main():
                         help="comma-separated domains to run (e.g. 'svg' for SVG-only rerun)")
     parser.add_argument("--min-samples", type=int, default=30,
                         help="minimum filtered samples to run a cell (default 30)")
+    parser.add_argument("--seed", type=int, default=42,
+                        help="random seed for data loading and generation")
+    parser.add_argument("--temperature", type=float, default=0.0,
+                        help="generation temperature (0.0 = greedy)")
     args = parser.parse_args()
 
     _env_sanity_check()
@@ -288,7 +292,7 @@ def main():
     svg_samples = load_svg_dataset(
         dataset_name="xiaoooobai/SVGenius",
         n_samples=n_svg,
-        seed=42,
+        seed=args.seed,
         split=args.svg_split,
     )
     logger.info("Loaded %d SVG samples", len(svg_samples))
@@ -297,7 +301,7 @@ def main():
     python_samples = load_python_dataset(
         dataset_name="s2e-lab/SecurityEval",
         n_samples=n_python,
-        seed=42,
+        seed=args.seed,
     )
     logger.info("Loaded %d Python samples", len(python_samples))
 
@@ -311,8 +315,9 @@ def main():
         gpu_memory_utilization=0.85,
         max_model_len=args.max_model_len,
         device=args.device,
+        seed=args.seed,
     )
-    gen_config = GenerationConfig(max_tokens=args.max_tokens, temperature=0.0)
+    gen_config = GenerationConfig(max_tokens=args.max_tokens, temperature=args.temperature)
 
     # Run 4 cells: 2 domain × 2 specificity
     # D015 Step 7: incremental dump after every cell so a mid-run kill
