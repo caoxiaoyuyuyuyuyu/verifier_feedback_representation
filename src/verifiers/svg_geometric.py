@@ -97,6 +97,9 @@ class SVGGeometricVerifier:
             return None
 
         # Extract viewBox
+        if not hasattr(svg, "viewbox"):
+            logger.warning("Parsed SVG has no viewbox attribute (type=%s)", type(svg).__name__)
+            return None
         vb = svg.viewbox
         if vb is None or vb.width <= 0 or vb.height <= 0:
             # Fallback to width/height attributes
