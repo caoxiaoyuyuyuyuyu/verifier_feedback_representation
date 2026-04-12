@@ -18,11 +18,8 @@ except ImportError:
     sys.exit(1)
 
 
-RESULTS_DIR = Path("/root/autodl-tmp/verifier_feedback_representation/results")
-FILES = {
-    "qwen": RESULTS_DIR / "phaseA_v3_qwen.json",
-    "llama": RESULTS_DIR / "phaseA_v3_llama.json",
-}
+RESULTS_DIR = Path("/home/caoxiaoyu/verifier_feedback_representation/results")
+MULTISEED_DIR = RESULTS_DIR / "multiseed"
 CELL_MAP = {
     "svg_precise": ("svg", "precise"),
     "svg_generic": ("svg", "generic"),
@@ -32,17 +29,28 @@ CELL_MAP = {
 
 
 def load_long_df() -> pd.DataFrame:
+    """Load all multiseed JSON files into a long-format DataFrame."""
     rows = []
-    for model_name, path in FILES.items():
-        with open(path) as f:
+    for json_path in sorted(MULTISEED_DIR.glob("*.json")):
+        # filename: {model}_{domain}_seed{N}.json
+        stem = json_path.stem  # e.g. qwen_svg_seed42
+        parts = stem.split("_")
+        model_name = parts[0]  # qwen / llama
+        domain_name = parts[1]  # svg / python
+        seed = parts[2]  # seed42 etc.
+
+        with open(json_path) as f:
             data = json.load(f)
         cells = data["cells"]
         for cell_name, (domain, spec) in CELL_MAP.items():
+            if domain != domain_name:
+                continue
             cell = cells[cell_name]
             per_sample = cell["per_sample_reduction"]
             for idx, val in enumerate(per_sample):
                 rows.append({
                     "sample_id": f"{domain}_{idx}",
+                    "seed": seed,
                     "model": model_name,
                     "domain": domain,
                     "specificity": spec,
