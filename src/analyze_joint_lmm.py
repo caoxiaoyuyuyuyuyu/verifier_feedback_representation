@@ -1,7 +1,10 @@
 """Joint LMM analyses for camera-ready R1 response.
 
-Uses Phase A multiseed data (3 seeds × 2 models × 2 domains).
-Each file has cells: {domain}_precise, {domain}_generic (NL format).
+Uses Phase B NL cells (corrected parser) as the data source:
+- Python NL: from multiseed_phaseB/ (corrected parser, cells: python_nl_precise/generic)
+- SVG: from multiseed/ (SVG only has NL format, no parser bug, cells: svg_precise/generic)
+
+Multi-seed: averages per_sample_reduction across 3 seeds before fitting.
 
 (a) Llama-only: DRR ~ specificity * domain + (1|sample_id)
 (b) Qwen-only: DRR ~ specificity * domain + (1|sample_id)  [verification]
@@ -13,6 +16,7 @@ import json
 import sys
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 
 try:
@@ -23,72 +27,77 @@ except ImportError:
 
 
 RESULTS_DIR = Path("/home/caoxiaoyu/verifier_feedback_representation/results")
-MULTISEED_DIR = RESULTS_DIR / "multiseed"
+SEEDS = [42, 123, 456]
 
-# Cells in each file: {domain}_precise, {domain}_generic
-CELL_MAP = {
-    "svg_precise": ("svg", "precise"),
-    "svg_generic": ("svg", "generic"),
-    "python_precise": ("python", "precise"),
-    "python_generic": ("python", "generic"),
+# Data sources:
+# Python NL → multiseed_phaseB/{model}_python_seed{s}.json  cells: python_nl_precise, python_nl_generic
+# SVG NL    → multiseed/{model}_svg_seed{s}.json            cells: svg_precise, svg_generic
+DATA_SPEC = {
+    # (model, domain): (subdir, cell_precise, cell_generic)
+    ("qwen", "python"):  ("multiseed_phaseB", "python_nl_precise", "python_nl_generic"),
+    ("qwen", "svg"):     ("multiseed",        "svg_precise",       "svg_generic"),
+    ("llama", "python"): ("multiseed_phaseB", "python_nl_precise", "python_nl_generic"),
+    ("llama", "svg"):    ("multiseed",        "svg_precise",       "svg_generic"),
 }
 
 
 def load_long_df():
-    """Load all multiseed JSON files into a long-format DataFrame.
-
-    Files: {model}_{domain}_seed{N}.json
-    Each has cells like svg_precise, svg_generic (for SVG files)
-    or python_precise, python_generic (for Python files).
-    We average across seeds per sample for the LMM.
-    """
+    """Load NL cells from multiseed files, average across seeds."""
     rows = []
-    files_used = []
+    files_used = {}
 
-    for json_path in sorted(MULTISEED_DIR.glob("*.json")):
-        stem = json_path.stem  # e.g. qwen_svg_seed42
-        parts = stem.split("_")
-        model_name = parts[0]  # qwen / llama
-        domain_name = parts[1]  # svg / python
-        seed = parts[2]  # seed42
-
-        files_used.append(str(json_path))
-        print(f"Loading {stem}")
-
-        with open(json_path) as f:
-            data = json.load(f)
-
-        cells = data["cells"]
-        for cell_name, (domain, spec) in CELL_MAP.items():
-            if domain != domain_name:
+    for (model, domain), (subdir, cell_precise, cell_generic) in DATA_SPEC.items():
+        key = f"{model}_{domain}"
+        seed_files = []
+        for seed in SEEDS:
+            path = RESULTS_DIR / subdir / f"{model}_{domain}_seed{seed}.json"
+            if not path.exists():
+                print(f"WARNING: {path} not found, skipping seed {seed} for {key}")
                 continue
-            if cell_name not in cells:
-                print(f"  WARNING: {cell_name} not in {stem}")
+            seed_files.append(path)
+
+        if not seed_files:
+            print(f"ERROR: No seed files found for {key}")
+            continue
+
+        files_used[key] = [str(p) for p in seed_files]
+        print(f"Loading {key} from {len(seed_files)} seed files ({subdir}/)")
+
+        for spec_label, cell_name in [("precise", cell_precise), ("generic", cell_generic)]:
+            seed_data = []
+            for path in seed_files:
+                with open(path) as f:
+                    data = json.load(f)
+                cells = data["cells"]
+                if cell_name not in cells:
+                    print(f"  WARNING: cell '{cell_name}' not in {path.name}. Available: {list(cells.keys())}")
+                    continue
+                seed_data.append(cells[cell_name]["per_sample_reduction"])
+
+            if not seed_data:
+                print(f"  WARNING: No data for {key} {spec_label}")
                 continue
-            cell = cells[cell_name]
-            per_sample = cell["per_sample_reduction"]
-            for idx, val in enumerate(per_sample):
+
+            # Average across seeds
+            n_samples = min(len(s) for s in seed_data)
+            avg = np.mean([s[:n_samples] for s in seed_data], axis=0)
+            print(f"  {cell_name}: {n_samples} samples x {len(seed_data)} seeds -> averaged")
+
+            for idx, val in enumerate(avg):
                 rows.append({
                     "sample_id": f"{domain}_{idx}",
-                    "seed": seed,
-                    "model": model_name,
+                    "model": model,
                     "domain": domain,
-                    "specificity": spec,
-                    "spec_bin": 1 if spec == "precise" else 0,
+                    "specificity": spec_label,
+                    "spec_bin": 1 if spec_label == "precise" else 0,
                     "domain_bin": 1 if domain == "python" else 0,
-                    "model_bin": 1 if model_name == "llama" else 0,
+                    "model_bin": 1 if model == "llama" else 0,
                     "reduction": float(val),
                 })
 
     df = pd.DataFrame(rows)
-
-    # Average across seeds per (sample_id, model, domain, specificity)
-    print(f"\nRaw: {len(df)} rows from {len(files_used)} files, {df['seed'].nunique()} seeds")
-    df_avg = (df.groupby(["sample_id", "model", "domain", "specificity",
-                           "spec_bin", "domain_bin", "model_bin"])
-              ["reduction"].mean().reset_index())
-    print(f"After seed-averaging: {len(df_avg)} rows")
-    return df_avg, files_used
+    print(f"\nTotal: {len(df)} rows from {len(files_used)} file groups")
+    return df, files_used
 
 
 def fit_lmm(df, formula, label):
@@ -145,7 +154,7 @@ def main():
     print(f"\nLoaded {len(df)} rows, {df['sample_id'].nunique()} unique samples")
     print(df.groupby(["domain", "model", "specificity"]).size())
 
-    results = {"data_source": "Phase A multiseed (seed-averaged)",
+    results = {"data_source": "Phase B NL cells (corrected parser) + multiseed SVG",
                "files_used": files_used}
 
     # (a) Llama-only: domain x specificity
@@ -202,7 +211,7 @@ def main():
                   f"SE={row['se']:.4f}, z={row['z']:+.3f}, p={row['p']:.4g}")
     results["joint_three_way"] = fit_c
 
-    out_path = RESULTS_DIR / "joint_lmm_results.json"
+    out_path = RESULTS_DIR / "joint_lmm_phaseB_NL.json"
     with open(out_path, "w") as f:
         json.dump(results, f, indent=2, default=str)
     print(f"\nWrote {out_path}")
