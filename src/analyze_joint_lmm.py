@@ -1,7 +1,7 @@
 """Joint LMM analyses for camera-ready R1 response.
 
-Uses Phase B NL cells (corrected parser) as the data source, NOT Phase A.
-Phase B NL precise/generic = corrected-parser equivalent of Phase A.
+Uses Phase A multiseed data (3 seeds × 2 models × 2 domains).
+Each file has cells: {domain}_precise, {domain}_generic (NL format).
 
 (a) Llama-only: DRR ~ specificity * domain + (1|sample_id)
 (b) Qwen-only: DRR ~ specificity * domain + (1|sample_id)  [verification]
@@ -22,106 +22,73 @@ except ImportError:
     sys.exit(1)
 
 
-# Phase B result files contain NL cells with corrected parser
-RESULTS_DIR = Path("/root/autodl-tmp/verifier_feedback_representation/results")
+RESULTS_DIR = Path("/home/caoxiaoyu/verifier_feedback_representation/results")
+MULTISEED_DIR = RESULTS_DIR / "multiseed"
 
-# Phase B files: each contains cells like {domain}_{format}_{specificity}
-# We extract only NL cells: svg_nl_precise, svg_nl_generic, python_nl_precise, python_nl_generic
-PHASE_B_FILES = {
-    "qwen_python": RESULTS_DIR / "phaseB_qwen_python_r2.json",
-    "qwen_svg": RESULTS_DIR / "phaseB_qwen_svg.json",
-    "llama_python": RESULTS_DIR / "phaseB_llama_python_r2.json",
-    "llama_svg": RESULTS_DIR / "phaseB_llama_svg_r2.json",
-}
-
-# Fallback paths if r2 doesn't exist
-PHASE_B_FALLBACKS = {
-    "qwen_python": [RESULTS_DIR / "phaseB_qwen_python.json"],
-    "qwen_svg": [RESULTS_DIR / "phaseB_qwen_svg.json"],
-    "llama_python": [RESULTS_DIR / "phaseB_llama_python.json"],
-    "llama_svg": [RESULTS_DIR / "phaseB_llama_svg.json",
-                  RESULTS_DIR / "phaseB_llama_svg_r2.json"],
-}
-
-# NL cells to extract from each file
-NL_CELLS = {
-    "nl_precise": "precise",
-    "nl_generic": "generic",
+# Cells in each file: {domain}_precise, {domain}_generic
+CELL_MAP = {
+    "svg_precise": ("svg", "precise"),
+    "svg_generic": ("svg", "generic"),
+    "python_precise": ("python", "precise"),
+    "python_generic": ("python", "generic"),
 }
 
 
-def find_file(key: str) -> Path:
-    """Find the Phase B result file, trying primary then fallbacks."""
-    primary = PHASE_B_FILES[key]
-    if primary.exists():
-        return primary
-    for fb in PHASE_B_FALLBACKS.get(key, []):
-        if fb.exists():
-            return fb
-    raise FileNotFoundError(f"No Phase B file found for {key}. Tried: {primary}, {PHASE_B_FALLBACKS.get(key, [])}")
+def load_long_df():
+    """Load all multiseed JSON files into a long-format DataFrame.
 
-
-def load_long_df() -> pd.DataFrame:
-    """Load Phase B NL cells into a long-format DataFrame.
-
-    Extracts only NL-format cells (nl_precise, nl_generic) from each
-    model×domain Phase B file. This gives us corrected-parser data
-    equivalent to Phase A but without the old parser bug.
+    Files: {model}_{domain}_seed{N}.json
+    Each has cells like svg_precise, svg_generic (for SVG files)
+    or python_precise, python_generic (for Python files).
+    We average across seeds per sample for the LMM.
     """
     rows = []
-    files_used = {}
+    files_used = []
 
-    for key, primary_path in PHASE_B_FILES.items():
-        model_name, domain_name = key.split("_", 1)
-        path = find_file(key)
-        files_used[key] = str(path)
-        print(f"Loading {key} from {path}")
+    for json_path in sorted(MULTISEED_DIR.glob("*.json")):
+        stem = json_path.stem  # e.g. qwen_svg_seed42
+        parts = stem.split("_")
+        model_name = parts[0]  # qwen / llama
+        domain_name = parts[1]  # svg / python
+        seed = parts[2]  # seed42
 
-        with open(path) as f:
+        files_used.append(str(json_path))
+        print(f"Loading {stem}")
+
+        with open(json_path) as f:
             data = json.load(f)
 
         cells = data["cells"]
-        available_cells = list(cells.keys())
-        print(f"  Available cells: {available_cells}")
-
-        for cell_name, spec in NL_CELLS.items():
-            # Try different naming conventions
-            actual_key = None
-            candidates = [
-                cell_name,                          # nl_precise
-                f"{domain_name}_{cell_name}",       # svg_nl_precise / python_nl_precise
-                f"{cell_name}_{domain_name}",       # nl_precise_svg
-            ]
-            for c in candidates:
-                if c in cells:
-                    actual_key = c
-                    break
-
-            if actual_key is None:
-                print(f"  WARNING: Could not find NL cell for {cell_name} in {key}. "
-                      f"Tried: {candidates}. Available: {available_cells}")
+        for cell_name, (domain, spec) in CELL_MAP.items():
+            if domain != domain_name:
                 continue
-
-            cell = cells[actual_key]
+            if cell_name not in cells:
+                print(f"  WARNING: {cell_name} not in {stem}")
+                continue
+            cell = cells[cell_name]
             per_sample = cell["per_sample_reduction"]
-            print(f"  {actual_key}: {len(per_sample)} samples")
-
             for idx, val in enumerate(per_sample):
                 rows.append({
-                    "sample_id": f"{domain_name}_{idx}",
+                    "sample_id": f"{domain}_{idx}",
+                    "seed": seed,
                     "model": model_name,
-                    "domain": domain_name,
+                    "domain": domain,
                     "specificity": spec,
                     "spec_bin": 1 if spec == "precise" else 0,
-                    "domain_bin": 1 if domain_name == "python" else 0,
+                    "domain_bin": 1 if domain == "python" else 0,
                     "model_bin": 1 if model_name == "llama" else 0,
                     "reduction": float(val),
                 })
 
     df = pd.DataFrame(rows)
-    print(f"\nTotal: {len(df)} rows from {len(files_used)} files")
-    print(f"Files used: {json.dumps(files_used, indent=2)}")
-    return df, files_used
+
+    # Average across seeds per (sample_id, model, domain, specificity)
+    print(f"\nRaw: {len(df)} rows from {len(files_used)} files, {df['seed'].nunique()} seeds")
+    df_avg = (df.groupby(["sample_id", "model", "domain", "specificity",
+                           "spec_bin", "domain_bin", "model_bin"])
+              ["reduction"].mean().reset_index())
+    print(f"After seed-averaging: {len(df_avg)} rows")
+    return df_avg, files_used
 
 
 def fit_lmm(df, formula, label):
@@ -178,7 +145,7 @@ def main():
     print(f"\nLoaded {len(df)} rows, {df['sample_id'].nunique()} unique samples")
     print(df.groupby(["domain", "model", "specificity"]).size())
 
-    results = {"data_source": "Phase B NL cells (corrected parser)",
+    results = {"data_source": "Phase A multiseed (seed-averaged)",
                "files_used": files_used}
 
     # (a) Llama-only: domain x specificity
@@ -235,7 +202,7 @@ def main():
                   f"SE={row['se']:.4f}, z={row['z']:+.3f}, p={row['p']:.4g}")
     results["joint_three_way"] = fit_c
 
-    out_path = RESULTS_DIR / "joint_lmm_phaseB_NL.json"
+    out_path = RESULTS_DIR / "joint_lmm_results.json"
     with open(out_path, "w") as f:
         json.dump(results, f, indent=2, default=str)
     print(f"\nWrote {out_path}")
