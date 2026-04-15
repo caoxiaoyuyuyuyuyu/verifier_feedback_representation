@@ -1,0 +1,22 @@
+2026-04-10 19:15:51 Loading SVG (split=medium)...
+Using the latest cached version of the dataset since xiaoooobai/SVGenius couldn't be found on the Hugging Face Hub (offline mode is enabled).
+2026-04-10 19:15:52 Using the latest cached version of the dataset since xiaoooobai/SVGenius couldn't be found on the Hugging Face Hub (offline mode is enabled).
+Found the latest cached dataset configuration 'default' at /root/autodl-tmp/.hf_cache/datasets/xiaoooobai___sv_genius/default/0.0.0/7d9cd059ee19ec86e12a87e67b82c168f0de65cb (last modified on Fri Apr 10 17:40:35 2026).
+2026-04-10 19:15:52 Found the latest cached dataset configuration 'default' at /root/autodl-tmp/.hf_cache/datasets/xiaoooobai___sv_genius/default/0.0.0/7d9cd059ee19ec86e12a87e67b82c168f0de65cb (last modified on Fri Apr 10 17:40:35 2026).
+2026-04-10 19:15:52 Loaded 100 SVG samples from xiaoooobai/SVGenius/medium
+2026-04-10 19:15:52 Loaded 100 SVG
+2026-04-10 19:15:52 Loading Python...
+Using the latest cached version of the dataset since s2e-lab/SecurityEval couldn't be found on the Hugging Face Hub (offline mode is enabled).
+2026-04-10 19:15:52 Using the latest cached version of the dataset since s2e-lab/SecurityEval couldn't be found on the Hugging Face Hub (offline mode is enabled).
+Found the latest cached dataset configuration 'default' at /root/autodl-tmp/.hf_cache/datasets/s2e-lab___security_eval/default/0.0.0/d1b6f685bba97b6f14af5f256e2aebf44216261f (last modified on Fri Apr 10 17:40:40 2026).
+2026-04-10 19:15:52 Found the latest cached dataset configuration 'default' at /root/autodl-tmp/.hf_cache/datasets/s2e-lab___security_eval/default/0.0.0/d1b6f685bba97b6f14af5f256e2aebf44216261f (last modified on Fri Apr 10 17:40:40 2026).
+2026-04-10 19:15:52 Loaded 121 Python samples from s2e-lab/SecurityEval/train
+2026-04-10 19:15:52 Loaded 121 Python
+2026-04-10 19:15:52 Loading model /root/autodl-tmp/models/llama-3.1-8b-instruct on cuda:1...
+2026-04-10 19:15:52 === Cell: svg_precise (100 samples) ===
+2026-04-10 19:15:55 Initializing transformers backend: /root/autodl-tmp/models/llama-3.1-8b-instruct
+`torch_dtype` is deprecated! Use `dtype` instead!
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards:  25%|██▌       | 1/4 [00:01<00:03,  1.06s/it]Loading checkpoint shards:  50%|█████     | 2/4 [00:02<00:02,  1.06s/it]Loading checkpoint shards:  75%|███████▌  | 3/4 [00:03<00:01,  1.02s/it]Loading checkpoint shards: 100%|██████████| 4/4 [00:03<00:00,  1.41it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:03<00:00,  1.20it/s]
+2026-04-10 19:15:59 transformers engine ready in 6.0s
+2026-04-10 19:16:00 Generating 100 prompts (max_tokens=4096, temp=0.0, backend=transformers)
+The following generation flags are not valid and may be ignored: ['temperature', 'top_p']. Set `TRANSFORMERS_VERBOSITY=info` for more details.

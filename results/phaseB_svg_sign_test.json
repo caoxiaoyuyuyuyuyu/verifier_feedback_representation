@@ -1,0 +1,87 @@
+{
+  "description": "Phase B SVG paired sign test: precise vs generic per-sample DRR",
+  "test": "binomial sign test (two-sided) + Wilcoxon signed-rank on nonzero diffs",
+  "diff": "precise - generic (per sample)",
+  "bonferroni_alpha": 0.008333333333333333,
+  "n_comparisons": 6,
+  "results": {
+    "qwen_nl": {
+      "n_pos": 10,
+      "n_neg": 47,
+      "n_tied": 43,
+      "n_nonzero": 57,
+      "sign_p": 7.513043097095994e-07,
+      "wilcoxon_p": 4.9515465550285615e-05,
+      "n_samples": 100,
+      "macro_precise": -0.0359,
+      "macro_generic": 0.0559,
+      "micro_precise": 0.0211,
+      "micro_generic": 0.1438
+    },
+    "qwen_raw_json": {
+      "n_pos": 16,
+      "n_neg": 40,
+      "n_tied": 44,
+      "n_nonzero": 56,
+      "sign_p": 0.001841554788492544,
+      "wilcoxon_p": 0.0004582130321288217,
+      "n_samples": 100,
+      "macro_precise": 0.0135,
+      "macro_generic": 0.0391,
+      "micro_precise": 0.0837,
+      "micro_generic": 0.2213
+    },
+    "qwen_hybrid": {
+      "n_pos": 17,
+      "n_neg": 42,
+      "n_tied": 41,
+      "n_nonzero": 59,
+      "sign_p": 0.0015471669302425245,
+      "wilcoxon_p": 0.004322106842575166,
+      "n_samples": 100,
+      "macro_precise": 0.0365,
+      "macro_generic": 0.1261,
+      "micro_precise": 0.1004,
+      "micro_generic": 0.2461
+    },
+    "llama_nl": {
+      "n_pos": 20,
+      "n_neg": 13,
+      "n_tied": 67,
+      "n_nonzero": 33,
+      "sign_p": 0.296206368599087,
+      "wilcoxon_p": 0.1623594809564719,
+      "n_samples": 100,
+      "macro_precise": 0.4084,
+      "macro_generic": 0.4076,
+      "micro_precise": 0.3069,
+      "micro_generic": 0.3751
+    },
+    "llama_raw_json": {
+      "n_pos": 58,
+      "n_neg": 13,
+      "n_tied": 29,
+      "n_nonzero": 71,
+      "sign_p": 6.26942884485106e-08,
+      "wilcoxon_p": 1.8726177527398173e-06,
+      "n_samples": 100,
+      "macro_precise": 0.23,
+      "macro_generic": 0.0412,
+      "micro_precise": 0.1847,
+      "micro_generic": 0.0825
+    },
+    "llama_hybrid": {
+      "n_pos": 34,
+      "n_neg": 17,
+      "n_tied": 49,
+      "n_nonzero": 51,
+      "sign_p": 0.024092907698449295,
+      "wilcoxon_p": 0.006161351725771488,
+      "n_samples": 100,
+      "macro_precise": 0.2303,
+      "macro_generic": 0.2132,
+      "micro_precise": 0.2133,
+      "micro_generic": 0.2474
+    }
+  }
+}

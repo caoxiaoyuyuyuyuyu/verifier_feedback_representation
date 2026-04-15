@@ -1,0 +1,44 @@
+{
+  "model": "/root/autodl-tmp/models/qwen2.5-7b-instruct",
+  "device": "cuda:0",
+  "svg_split": "medium",
+  "condition": "no_feedback",
+  "cells": {
+    "svg_no_feedback": {
+      "domain": "svg",
+      "format": "none",
+      "specificity": "no_feedback",
+      "status": "OK",
+      "n_filtered": 1,
+      "n_total": 1,
+      "diagnostic_reduction_rate_macro": 0.0,
+      "diagnostic_reduction_rate_micro": 0.0,
+      "per_sample_reduction": [
+        0.0
+      ],
+      "avg_diagnostics_before": 16.0,
+      "avg_diagnostics_after_raw": 16.0,
+      "avg_diagnostics_after_effective": 16.0,
+      "gen_time_seconds": 85.7,
+      "avg_tokens": 5211.0,
+      "per_sample": [
+        {
+          "idx": 0,
+          "diags_before": 16,
+          "diags_after": 16,
+          "diags_after_effective": 16,
+          "errors_before": 0,
+          "errors_after": 0,
+          "newly_broken": false,
+          "had_parse_err_before": false,
+          "has_parse_err_after": false,
+          "passed": true,
+          "tokens": 5211
+        }
+      ],
+      "parse_survival_rate": 1.0,
+      "predicate_fix_rate_among_survivors": 0.0,
+      "n_survivors_with_warn_before": 1
+    }
+  }
+}

@@ -1,0 +1,350 @@
+{
+  "task1": {
+    "phaseA_qwen": {
+      "n_rows": 298,
+      "model": "qwen",
+      "model_type": "mixedlm",
+      "converged": true,
+      "params": {
+        "Intercept": 0.16678545886510562,
+        "specificity": -0.1986063249204772,
+        "domain": 0.38423494929816054,
+        "specificity:domain": 0.32105530451231373,
+        "Group Var": 7.509222346803971
+      },
+      "pvalues": {
+        "Intercept": 0.06917923057784142,
+        "specificity": 8.061859416557382e-06,
+        "domain": 0.016358861010486055,
+        "specificity:domain": 3.506360146099888e-05,
+        "Group Var": 1.0510700133460203e-08
+      },
+      "bse": {
+        "Intercept": 0.0917791673139152,
+        "specificity": 0.04449530366217917,
+        "domain": 0.16004393002614783,
+        "specificity:domain": 0.07759062839876428,
+        "Group Var": 1.3122791832456973
+      },
+      "interaction": {
+        "coef": 0.32105530451231373,
+        "se": 0.07759062839876428,
+        "z": 4.137810340474403,
+        "p": 3.506360146099888e-05
+      }
+    },
+    "phaseA_llama": {
+      "n_rows": 298,
+      "model": "llama",
+      "mixedlm_error": "Singular matrix",
+      "model_type": "ols_fallback",
+      "params": {
+        "Intercept": 0.41414271361186134,
+        "specificity": -0.008466038083479102,
+        "domain": 0.28993891904119956,
+        "specificity:domain": 0.03567692243722083
+      },
+      "pvalues": {
+        "Intercept": 3.476382785938195e-14,
+        "specificity": 0.9083344262539408,
+        "domain": 0.001521008571545431,
+        "specificity:domain": 0.7808312215567857
+      },
+      "bse": {
+        "Intercept": 0.05194767132808453,
+        "specificity": 0.07346510132587725,
+        "domain": 0.09058601988201699,
+        "specificity:domain": 0.12810797787854733
+      },
+      "interaction": {
+        "coef": 0.03567692243722083,
+        "se": 0.12810797787854733,
+        "t": 0.2784910278659172,
+        "p": 0.7808312215567857
+      }
+    },
+    "phaseB_qwen": {
+      "n_rows": 294,
+      "model": "qwen",
+      "model_type": "mixedlm",
+      "converged": true,
+      "params": {
+        "Intercept": 0.5612244897959187,
+        "C(format)[T.nl]": -0.010204081632653048,
+        "C(format)[T.raw_json]": -0.04081632653061217,
+        "specificity": 0.19387755102040843,
+        "C(format)[T.nl]:specificity": -0.07142857142857179,
+        "C(format)[T.raw_json]:specificity": -0.11904761904761943,
+        "Group Var": 2.3372606248753205
+      },
+      "pvalues": {
+        "Intercept": 2.124852138433578e-18,
+        "C(format)[T.nl]": 0.837168033987321,
+        "C(format)[T.raw_json]": 0.41103766192977065,
+        "specificity": 9.429263398137446e-05,
+        "C(format)[T.nl]:specificity": 0.30903051451835206,
+        "C(format)[T.raw_json]:specificity": 0.08999374837486879,
+        "Group Var": 2.472264249120466e-05
+      },
+      "bse": {
+        "Intercept": 0.06413657151224895,
+        "C(format)[T.nl]": 0.04965073434371114,
+        "C(format)[T.raw_json]": 0.04965073434371114,
+        "specificity": 0.049650734343711186,
+        "C(format)[T.nl]:specificity": 0.07021674189065995,
+        "C(format)[T.raw_json]:specificity": 0.07021674189065995,
+        "Group Var": 0.5542055962708073
+      },
+      "interaction_terms": {
+        "C(format)[T.nl]:specificity": {
+          "coef": -0.07142857142857179,
+          "se": 0.07021674189065995,
+          "z": -1.0172584130975326,
+          "p": 0.30903051451835206
+        },
+        "C(format)[T.raw_json]:specificity": {
+          "coef": -0.11904761904761943,
+          "se": 0.07021674189065995,
+          "z": -1.6954306884958847,
+          "p": 0.08999374837486879
+        }
+      }
+    },
+    "phaseB_llama": {
+      "n_rows": 294,
+      "model": "llama",
+      "model_type": "mixedlm",
+      "converged": true,
+      "params": {
+        "Intercept": 0.7619047619047599,
+        "C(format)[T.nl]": -0.057823129251700786,
+        "C(format)[T.raw_json]": 0.03741496598639452,
+        "specificity": -0.0714285714285716,
+        "C(format)[T.nl]:specificity": 0.09863945578231305,
+        "C(format)[T.raw_json]:specificity": 0.01360544217687088,
+        "Group Var": 4.236836763980807
+      },
+      "pvalues": {
+        "Intercept": 8.638100849863194e-27,
+        "C(format)[T.nl]": 0.1882102972464259,
+        "C(format)[T.raw_json]": 0.39451413864470386,
+        "specificity": 0.10405316071144032,
+        "C(format)[T.nl]:specificity": 0.1124485989310731,
+        "C(format)[T.raw_json]:specificity": 0.8267002417929643,
+        "Group Var": 1.3752310528371361e-05
+      },
+      "bse": {
+        "Intercept": 0.07110511904719295,
+        "C(format)[T.nl]": 0.043942154556895936,
+        "C(format)[T.raw_json]": 0.043942154556895936,
+        "specificity": 0.043942154556896006,
+        "C(format)[T.nl]:specificity": 0.06214359093425694,
+        "C(format)[T.raw_json]:specificity": 0.062143590934256934,
+        "Group Var": 0.9744830210991373
+      },
+      "interaction_terms": {
+        "C(format)[T.nl]:specificity": {
+          "coef": 0.09863945578231305,
+          "se": 0.06214359093425694,
+          "z": 1.5872828444475615,
+          "p": 0.1124485989310731
+        },
+        "C(format)[T.raw_json]:specificity": {
+          "coef": 0.01360544217687088,
+          "se": 0.062143590934256934,
+          "z": 0.21893556475138964,
+          "p": 0.8267002417929643
+        }
+      }
+    }
+  },
+  "task2": {
+    "penalty_0": {
+      "DRR_precise": 0.0738682365087307,
+      "DRR_generic": 0.28991045886510586,
+      "delta": -0.21604222235637516
+    },
+    "penalty_5": {
+      "DRR_precise": 0.02102368522667941,
+      "DRR_generic": 0.22834795886510584,
+      "delta": -0.20732427363842643
+    },
+    "penalty_10": {
+      "DRR_precise": -0.03182086605537187,
+      "DRR_generic": 0.16678545886510585,
+      "delta": -0.19860632492047772
+    },
+    "penalty_20": {
+      "DRR_precise": -0.1375099686194744,
+      "DRR_generic": 0.04366045886510584,
+      "delta": -0.18117042748458023
+    },
+    "penalty_10_excl_54": {
+      "DRR_precise": 0.06886781206528095,
+      "DRR_generic": 0.2694802614799049,
+      "delta": -0.20061244941462394,
+      "n_precise": 99,
+      "n_generic": 99
+    }
+  },
+  "task3": {
+    "phaseA": {
+      "qwen_svg": {
+        "n": 100,
+        "n_pos": 9,
+        "n_neg": 46,
+        "n_tied": 45,
+        "statistic": 651.0,
+        "p_value": 9.717259711929728e-07,
+        "method": "approx",
+        "zero_method": "pratt"
+      },
+      "qwen_python": {
+        "n": 49,
+        "n_pos": 9,
+        "n_neg": 1,
+        "n_tied": 39,
+        "statistic": 46.5,
+        "p_value": 0.012503146842547327,
+        "method": "approx",
+        "zero_method": "pratt"
+      },
+      "llama_svg": {
+        "n": 100,
+        "n_pos": 21,
+        "n_neg": 11,
+        "n_tied": 68,
+        "statistic": 942.0,
+        "p_value": 0.08810522730254812,
+        "method": "approx",
+        "zero_method": "pratt"
+      },
+      "llama_python": {
+        "n": 49,
+        "n_pos": 3,
+        "n_neg": 1,
+        "n_tied": 45,
+        "statistic": 47.5,
+        "p_value": 0.3174311280141605,
+        "method": "approx",
+        "zero_method": "pratt"
+      }
+    },
+    "phaseB": {
+      "qwen_nl": {
+        "n": 49,
+        "n_pos": 9,
+        "n_neg": 1,
+        "n_tied": 39,
+        "statistic": 46.5,
+        "p_value": 0.012503146842547327,
+        "method": "approx",
+        "zero_method": "pratt"
+      },
+      "qwen_raw_json": {
+        "n": 49,
+        "n_pos": 7,
+        "n_neg": 2,
+        "n_tied": 40,
+        "statistic": 88.5,
+        "p_value": 0.09168473204902584,
+        "method": "approx",
+        "zero_method": "pratt"
+      },
+      "qwen_hybrid": {
+        "n": 49,
+        "n_pos": 12,
+        "n_neg": 1,
+        "n_tied": 36,
+        "statistic": 39.0,
+        "p_value": 0.001974139712170364,
+        "method": "approx",
+        "zero_method": "pratt"
+      },
+      "llama_nl": {
+        "n": 49,
+        "n_pos": 3,
+        "n_neg": 1,
+        "n_tied": 45,
+        "statistic": 47.5,
+        "p_value": 0.3174311280141605,
+        "method": "approx",
+        "zero_method": "pratt"
+      },
+      "llama_raw_json": {
+        "n": 49,
+        "n_pos": 2,
+        "n_neg": 4,
+        "n_tied": 43,
+        "statistic": 92.0,
+        "p_value": 0.4045301847762579,
+        "method": "approx",
+        "zero_method": "pratt"
+      },
+      "llama_hybrid": {
+        "n": 49,
+        "n_pos": 1,
+        "n_neg": 3,
+        "n_tied": 45,
+        "statistic": 46.0,
+        "p_value": 0.3023899090358966,
+        "method": "approx",
+        "zero_method": "pratt"
+      }
+    },
+    "power_phaseB": {
+      "qwen_nl": {
+        "mean_diff": 0.12244897959183673,
+        "sd_diff": 0.36128549774984564,
+        "cohen_d": 0.33892580896402463,
+        "power": 0.3626404550273569,
+        "n": 49,
+        "alpha": 0.008333333333333333
+      },
+      "qwen_raw_json": {
+        "mean_diff": 0.07482993197278912,
+        "sd_diff": 0.3174355149041282,
+        "cohen_d": 0.2357327030511669,
+        "power": 0.1474889774951474,
+        "n": 49,
+        "alpha": 0.008333333333333333
+      },
+      "qwen_hybrid": {
+        "mean_diff": 0.19387755102040816,
+        "sd_diff": 0.3928571428571429,
+        "cohen_d": 0.49350649350649345,
+        "power": 0.7550354345495227,
+        "n": 49,
+        "alpha": 0.008333333333333333
+      },
+      "llama_nl": {
+        "mean_diff": 0.0272108843537415,
+        "sd_diff": 0.18113242922265405,
+        "cohen_d": 0.15022646397731998,
+        "power": 0.05229707136492103,
+        "n": 49,
+        "alpha": 0.008333333333333333
+      },
+      "llama_raw_json": {
+        "mean_diff": -0.05782312925170068,
+        "sd_diff": 0.38722514207834746,
+        "cohen_d": -0.1493268978903268,
+        "power": 0.05165579935323518,
+        "n": 49,
+        "alpha": 0.008333333333333333
+      },
+      "llama_hybrid": {
+        "mean_diff": -0.07142857142857142,
+        "sd_diff": 0.3535533905932738,
+        "cohen_d": -0.20203050891044214,
+        "power": 0.10124556526805666,
+        "n": 49,
+        "alpha": 0.008333333333333333
+      }
+    }
+  },
+  "_meta": {
+    "alpha_bonferroni_phaseB": 0.008333333333333333,
+    "has_statsmodels": true
+  }
+}

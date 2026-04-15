@@ -1,0 +1,115 @@
+2026-04-10 19:15:22 Loading SVG (split=medium)...
+Using the latest cached version of the dataset since xiaoooobai/SVGenius couldn't be found on the Hugging Face Hub (offline mode is enabled).
+2026-04-10 19:15:23 Using the latest cached version of the dataset since xiaoooobai/SVGenius couldn't be found on the Hugging Face Hub (offline mode is enabled).
+Found the latest cached dataset configuration 'default' at /root/autodl-tmp/.hf_cache/datasets/xiaoooobai___sv_genius/default/0.0.0/7d9cd059ee19ec86e12a87e67b82c168f0de65cb (last modified on Fri Apr 10 17:40:35 2026).
+2026-04-10 19:15:23 Found the latest cached dataset configuration 'default' at /root/autodl-tmp/.hf_cache/datasets/xiaoooobai___sv_genius/default/0.0.0/7d9cd059ee19ec86e12a87e67b82c168f0de65cb (last modified on Fri Apr 10 17:40:35 2026).
+2026-04-10 19:15:23 Loaded 100 SVG samples from xiaoooobai/SVGenius/medium
+2026-04-10 19:15:23 Loaded 100 SVG
+2026-04-10 19:15:23 Loading Python...
+Using the latest cached version of the dataset since s2e-lab/SecurityEval couldn't be found on the Hugging Face Hub (offline mode is enabled).
+2026-04-10 19:15:23 Using the latest cached version of the dataset since s2e-lab/SecurityEval couldn't be found on the Hugging Face Hub (offline mode is enabled).
+Found the latest cached dataset configuration 'default' at /root/autodl-tmp/.hf_cache/datasets/s2e-lab___security_eval/default/0.0.0/d1b6f685bba97b6f14af5f256e2aebf44216261f (last modified on Fri Apr 10 17:40:40 2026).
+2026-04-10 19:15:23 Found the latest cached dataset configuration 'default' at /root/autodl-tmp/.hf_cache/datasets/s2e-lab___security_eval/default/0.0.0/d1b6f685bba97b6f14af5f256e2aebf44216261f (last modified on Fri Apr 10 17:40:40 2026).
+2026-04-10 19:15:23 Loaded 121 Python samples from s2e-lab/SecurityEval/train
+2026-04-10 19:15:23 Loaded 121 Python
+2026-04-10 19:15:23 Loading model /root/autodl-tmp/models/qwen2.5-7b-instruct on cuda:0...
+2026-04-10 19:15:23 === Cell: svg_precise (100 samples) ===
+2026-04-10 19:15:25 Initializing transformers backend: /root/autodl-tmp/models/qwen2.5-7b-instruct
+Sliding Window Attention is enabled but not implemented for `sdpa`; unexpected results may be encountered.
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards:  25%|██▌       | 1/4 [00:01<00:03,  1.06s/it]Loading checkpoint shards:  50%|█████     | 2/4 [00:01<00:01,  1.19it/s]Loading checkpoint shards:  75%|███████▌  | 3/4 [00:02<00:00,  1.29it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:03<00:00,  1.38it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:03<00:00,  1.29it/s]
+2026-04-10 19:15:29 transformers engine ready in 4.8s
+2026-04-10 19:15:29 Generating 100 prompts (max_tokens=4096, temp=0.0, backend=transformers)
+/usr/local/lib/python3.10/dist-packages/transformers/generation/configuration_utils.py:629: UserWarning: `do_sample` is set to `False`. However, `temperature` is set to `0.7` -- this flag is only used in sample-based generation modes. You should set `do_sample=True` or unset `temperature`.
+  warnings.warn(
+/usr/local/lib/python3.10/dist-packages/transformers/generation/configuration_utils.py:634: UserWarning: `do_sample` is set to `False`. However, `top_p` is set to `0.8` -- this flag is only used in sample-based generation modes. You should set `do_sample=True` or unset `top_p`.
+  warnings.warn(
+/usr/local/lib/python3.10/dist-packages/transformers/generation/configuration_utils.py:651: UserWarning: `do_sample` is set to `False`. However, `top_k` is set to `20` -- this flag is only used in sample-based generation modes. You should set `do_sample=True` or unset `top_k`.
+  warnings.warn(
+2026-04-10 20:22:27 Generated 100 outputs in 4017.6s (94 tok/s, 377918 total tokens)
+2026-04-10 20:22:27 SVG parse failed: not well-formed (invalid token): line 1, column 0
+2026-04-10 20:22:27 SVG parse failed: not well-formed (invalid token): line 1, column 0
+2026-04-10 20:22:27 SVG parse failed: not well-formed (invalid token): line 1, column 0
+2026-04-10 20:22:27 SVG parse failed: not well-formed (invalid token): line 1, column 0
+2026-04-10 20:22:27 SVG parse failed: not well-formed (invalid token): line 1, column 0
+2026-04-10 20:22:27 SVG parse failed: not well-formed (invalid token): line 1, column 0
+2026-04-10 20:22:27 SVG parse failed: not well-formed (invalid token): line 1, column 0
+2026-04-10 20:22:27 SVG parse failed: not well-formed (invalid token): line 1, column 0
+2026-04-10 20:22:27 SVG parse failed: not well-formed (invalid token): line 1, column 0
+2026-04-10 20:22:27 SVG parse failed: not well-formed (invalid token): line 1, column 0
+2026-04-10 20:22:27 SVG parse failed: not well-formed (invalid token): line 1, column 0
+2026-04-10 20:22:27 SVG parse failed: not well-formed (invalid token): line 1, column 0
+2026-04-10 20:22:27 SVG parse failed: not well-formed (invalid token): line 1, column 0
+2026-04-10 20:22:27 SVG parse failed: not well-formed (invalid token): line 1, column 0
+2026-04-10 20:22:27 SVG parse failed: not well-formed (invalid token): line 1, column 0
+2026-04-10 20:22:27 SVG parse failed: not well-formed (invalid token): line 1, column 0
+2026-04-10 20:22:27 SVG parse failed: not well-formed (invalid token): line 1, column 0
+2026-04-10 20:22:27 SVG parse failed: not well-formed (invalid token): line 1, column 0
+2026-04-10 20:22:27 SVG parse failed: not well-formed (invalid token): line 1, column 0
+2026-04-10 20:22:27 SVG parse failed: not well-formed (invalid token): line 1, column 0
+2026-04-10 20:22:27 SVG parse failed: not well-formed (invalid token): line 1, column 0
+2026-04-10 20:22:27 SVG parse failed: not well-formed (invalid token): line 1, column 0
+2026-04-10 20:22:27 SVG parse failed: not well-formed (invalid token): line 1, column 0
+2026-04-10 20:22:27 SVG parse failed: not well-formed (invalid token): line 1, column 0
+2026-04-10 20:22:27 SVG parse failed: not well-formed (invalid token): line 1, column 0
+2026-04-10 20:22:27 SVG parse failed: not well-formed (invalid token): line 1, column 0
+2026-04-10 20:22:27 SVG parse failed: not well-formed (invalid token): line 1, column 0
+2026-04-10 20:22:27 SVG parse failed: not well-formed (invalid token): line 1, column 0
+2026-04-10 20:22:27 SVG parse failed: not well-formed (invalid token): line 1, column 0
+2026-04-10 20:22:27 SVG parse failed: not well-formed (invalid token): line 1, column 0
+2026-04-10 20:22:27 SVG parse failed: not well-formed (invalid token): line 1, column 0
+2026-04-10 20:22:27 SVG parse failed: not well-formed (invalid token): line 1, column 0
+2026-04-10 20:22:27 SVG parse failed: not well-formed (invalid token): line 1, column 0
+2026-04-10 20:22:27 SVG parse failed: not well-formed (invalid token): line 1, column 0
+2026-04-10 20:22:27 SVG parse failed: not well-formed (invalid token): line 1, column 0
+2026-04-10 20:22:27 SVG parse failed: not well-formed (invalid token): line 1, column 7
+2026-04-10 20:22:27 SVG parse failed: not well-formed (invalid token): line 1, column 6
+2026-04-10 20:22:27 SVG parse failed: syntax error: line 1, column 0
+2026-04-10 20:22:27 SVG parse failed: not well-formed (invalid token): line 1, column 0
+2026-04-10 20:22:27 SVG parse failed: not well-formed (invalid token): line 1, column 0
+2026-04-10 20:22:27 SVG parse failed: syntax error: line 1, column 0
+2026-04-10 20:22:27 SVG parse failed: not well-formed (invalid token): line 1, column 0
+2026-04-10 20:22:27 SVG parse failed: not well-formed (invalid token): line 1, column 3
+2026-04-10 20:22:27 SVG parse failed: not well-formed (invalid token): line 1, column 0
+2026-04-10 20:22:27 SVG parse failed: not well-formed (invalid token): line 1, column 0
+2026-04-10 20:22:27 SVG parse failed: not well-formed (invalid token): line 1, column 0
+2026-04-10 20:22:27 SVG parse failed: not well-formed (invalid token): line 1, column 0
+2026-04-10 20:22:27 SVG parse failed: not well-formed (invalid token): line 1, column 0
+2026-04-10 20:22:27 SVG parse failed: not well-formed (invalid token): line 1, column 0
+2026-04-10 20:22:27 SVG parse failed: not well-formed (invalid token): line 1, column 0
+2026-04-10 20:22:27 SVG parse failed: not well-formed (invalid token): line 1, column 0
+2026-04-10 20:22:27 SVG parse failed: not well-formed (invalid token): line 1, column 0
+2026-04-10 20:22:27 SVG parse failed: not well-formed (invalid token): line 1, column 0
+2026-04-10 20:22:27 SVG parse failed: not well-formed (invalid token): line 1, column 0
+2026-04-10 20:22:27 SVG parse failed: not well-formed (invalid token): line 1, column 0
+2026-04-10 20:22:27 SVG parse failed: not well-formed (invalid token): line 1, column 0
+2026-04-10 20:22:27 SVG parse failed: not well-formed (invalid token): line 1, column 0
+2026-04-10 20:22:27 SVG parse failed: not well-formed (invalid token): line 1, column 0
+2026-04-10 20:22:27 SVG parse failed: not well-formed (invalid token): line 1, column 0
+2026-04-10 20:22:27 SVG parse failed: not well-formed (invalid token): line 1, column 0
+2026-04-10 20:22:27 SVG parse failed: syntax error: line 1, column 0
+2026-04-10 20:22:27 SVG parse failed: not well-formed (invalid token): line 1, column 0
+2026-04-10 20:22:27 SVG parse failed: not well-formed (invalid token): line 1, column 0
+2026-04-10 20:22:27 SVG parse failed: not well-formed (invalid token): line 1, column 0
+2026-04-10 20:22:27 SVG parse failed: not well-formed (invalid token): line 1, column 0
+2026-04-10 20:22:27 SVG parse failed: not well-formed (invalid token): line 1, column 0
+2026-04-10 20:22:27 SVG parse failed: not well-formed (invalid token): line 1, column 0
+2026-04-10 20:22:27 SVG parse failed: not well-formed (invalid token): line 1, column 0
+2026-04-10 20:22:27 SVG parse failed: not well-formed (invalid token): line 1, column 0
+2026-04-10 20:22:27 SVG parse failed: not well-formed (invalid token): line 1, column 0
+2026-04-10 20:22:27 SVG parse failed: not well-formed (invalid token): line 1, column 0
+2026-04-10 20:22:27 SVG parse failed: syntax error: line 1, column 0
+2026-04-10 20:22:27 SVG parse failed: syntax error: line 1, column 0
+2026-04-10 20:22:27 SVG parse failed: not well-formed (invalid token): line 1, column 0
+2026-04-10 20:22:27 SVG parse failed: not well-formed (invalid token): line 1, column 0
+2026-04-10 20:22:27 SVG parse failed: not well-formed (invalid token): line 1, column 0
+2026-04-10 20:22:27 SVG parse failed: not well-formed (invalid token): line 1, column 0
+2026-04-10 20:22:27 SVG parse failed: not well-formed (invalid token): line 1, column 0
+2026-04-10 20:22:27   pass=22.0%, first_attempt=100.0%, diag_reduction=74.8%, error_reduction=0.0%, time=4022.4s
+2026-04-10 20:22:27 === Cell: svg_generic (100 samples) ===
+2026-04-10 20:22:29 Generating 100 prompts (max_tokens=4096, temp=0.0, backend=transformers)
+/usr/local/lib/python3.10/dist-packages/transformers/generation/configuration_utils.py:629: UserWarning: `do_sample` is set to `False`. However, `temperature` is set to `0.7` -- this flag is only used in sample-based generation modes. You should set `do_sample=True` or unset `temperature`.
+  warnings.warn(
+/usr/local/lib/python3.10/dist-packages/transformers/generation/configuration_utils.py:634: UserWarning: `do_sample` is set to `False`. However, `top_p` is set to `0.8` -- this flag is only used in sample-based generation modes. You should set `do_sample=True` or unset `top_p`.
+  warnings.warn(
+/usr/local/lib/python3.10/dist-packages/transformers/generation/configuration_utils.py:651: UserWarning: `do_sample` is set to `False`. However, `top_k` is set to `20` -- this flag is only used in sample-based generation modes. You should set `do_sample=True` or unset `top_k`.
+  warnings.warn(

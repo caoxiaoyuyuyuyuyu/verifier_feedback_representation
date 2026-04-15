@@ -1,0 +1,199 @@
+{
+  "data_summary": {
+    "total_rows": 596,
+    "by_cell": [
+      {
+        "domain": "python",
+        "model": "llama",
+        "specificity": "generic",
+        "n": 49
+      },
+      {
+        "domain": "python",
+        "model": "llama",
+        "specificity": "precise",
+        "n": 49
+      },
+      {
+        "domain": "python",
+        "model": "qwen",
+        "specificity": "generic",
+        "n": 49
+      },
+      {
+        "domain": "python",
+        "model": "qwen",
+        "specificity": "precise",
+        "n": 49
+      },
+      {
+        "domain": "svg",
+        "model": "llama",
+        "specificity": "generic",
+        "n": 100
+      },
+      {
+        "domain": "svg",
+        "model": "llama",
+        "specificity": "precise",
+        "n": 100
+      },
+      {
+        "domain": "svg",
+        "model": "qwen",
+        "specificity": "generic",
+        "n": 100
+      },
+      {
+        "domain": "svg",
+        "model": "qwen",
+        "specificity": "precise",
+        "n": 100
+      }
+    ]
+  },
+  "svg": {
+    "domain": "svg",
+    "n_obs": 400,
+    "n_samples": 100,
+    "mixedlm_error": "LinAlgError: Singular matrix",
+    "converged": true,
+    "fit_method": "ols_fallback",
+    "summary": "                            OLS Regression Results                            \n==============================================================================\nDep. Variable:              reduction   R-squared:                       0.046\nModel:                            OLS   Adj. R-squared:                  0.038\nMethod:                 Least Squares   F-statistic:                     6.316\nDate:                Sat, 11 Apr 2026   Prob (F-statistic):           0.000342\nTime:                        12:12:28   Log-Likelihood:                -500.72\nNo. Observations:                 400   AIC:                             1009.\nDf Residuals:                     396   BIC:                             1025.\nDf Model:                           3                                         \nCovariance Type:            nonrobust                                         \n=================================================================================================================\n                                                    coef    std err          t      P>|t|      [0.025      0.975]\n-----------------------------------------------------------------------------------------------------------------\nIntercept                                         0.1668      0.085      1.961      0.051      -0.000       0.334\nC(model, Treatment('qwen'))[T.llama]              0.2474      0.120      2.057      0.040       0.011       0.484\nspec_bin                                         -0.1986      0.120     -1.652      0.099      -0.435       0.038\nspec_bin:C(model, Treatment('qwen'))[T.llama]     0.1901      0.170      1.118      0.264      -0.144       0.524\n==============================================================================\nOmnibus:                      648.279   Durbin-Watson:                   2.122\nProb(Omnibus):                  0.000   Jarque-Bera (JB):           178215.093\nSkew:                          -9.115   Prob(JB):                         0.00\nKurtosis:                     104.787   Cond. No.                         6.85\n==============================================================================\n\nNotes:\n[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.",
+    "coef_table": [
+      {
+        "term": "Intercept",
+        "coef": 0.1667870000000009,
+        "se": 0.08503455954357732,
+        "z": 1.9614025273398195,
+        "p": 0.05053235632267114
+      },
+      {
+        "term": "C(model, Treatment('qwen'))[T.llama]",
+        "coef": 0.24735699999999852,
+        "se": 0.12025702737694943,
+        "z": 2.0569026641964983,
+        "p": 0.04035011530149942
+      },
+      {
+        "term": "spec_bin",
+        "coef": -0.19861000000000079,
+        "se": 0.12025702737694957,
+        "z": -1.6515458957541937,
+        "p": 0.09941987096897201
+      },
+      {
+        "term": "spec_bin:C(model, Treatment('qwen'))[T.llama]",
+        "coef": 0.1901410000000019,
+        "se": 0.17006911908715464,
+        "z": 1.1180219020394944,
+        "p": 0.26423542613786494
+      }
+    ],
+    "cell_means": [
+      {
+        "model": "llama",
+        "specificity": "generic",
+        "mean": 0.414144,
+        "std": 0.3095487400860952,
+        "count": 100
+      },
+      {
+        "model": "llama",
+        "specificity": "precise",
+        "mean": 0.405675,
+        "std": 0.6796920354881766,
+        "count": 100
+      },
+      {
+        "model": "qwen",
+        "specificity": "generic",
+        "mean": 0.166787,
+        "std": 1.117168073557765,
+        "count": 100
+      },
+      {
+        "model": "qwen",
+        "specificity": "precise",
+        "mean": -0.031823000000000004,
+        "std": 1.0423455936187207,
+        "count": 100
+      }
+    ]
+  },
+  "python": {
+    "domain": "python",
+    "n_obs": 196,
+    "n_samples": 49,
+    "converged": true,
+    "fit_method": "mixedlm_reml",
+    "summary": "                         Mixed Linear Model Regression Results\n========================================================================================\nModel:                       MixedLM            Dependent Variable:            reduction\nNo. Observations:            196                Method:                        REML     \nNo. Groups:                  49                 Scale:                         0.1113   \nMin. group size:             4                  Log-Likelihood:                -109.1975\nMax. group size:             4                  Converged:                     Yes      \nMean group size:             4.0                                                        \n----------------------------------------------------------------------------------------\n                                              Coef.  Std.Err.   z    P>|z| [0.025 0.975]\n----------------------------------------------------------------------------------------\nIntercept                                      0.551    0.068  8.056 0.000  0.417  0.685\nC(model, Treatment('qwen'))[T.llama]           0.153    0.067  2.271 0.023  0.021  0.285\nspec_bin                                       0.122    0.067  1.817 0.069 -0.010  0.255\nspec_bin:C(model, Treatment('qwen'))[T.llama] -0.095    0.095 -0.999 0.318 -0.282  0.092\nGroup Var                                      0.118    0.103                           \n========================================================================================\n",
+    "coef_table": [
+      {
+        "term": "Intercept",
+        "coef": 0.5510204081632655,
+        "se": 0.0683981786632106,
+        "z": 8.056068435337496,
+        "p": 7.878753381787238e-16
+      },
+      {
+        "term": "C(model, Treatment('qwen'))[T.llama]",
+        "coef": 0.15306122448979576,
+        "se": 0.06740254721751154,
+        "z": 2.2708522275257517,
+        "p": 0.02315592505041937
+      },
+      {
+        "term": "spec_bin",
+        "coef": 0.12244897959183662,
+        "se": 0.06740254721751154,
+        "z": 1.8166817820206018,
+        "p": 0.06926585284931983
+      },
+      {
+        "term": "spec_bin:C(model, Treatment('qwen'))[T.llama]",
+        "coef": -0.09523877551020377,
+        "se": 0.09532159641349765,
+        "z": -0.9991311422971284,
+        "p": 0.3177311667856436
+      },
+      {
+        "term": "Group Var",
+        "coef": 1.0595220764231343,
+        "se": 0.3086561745470649,
+        "z": 3.4326936047137946,
+        "p": 0.0005976170363796038
+      }
+    ],
+    "cell_means": [
+      {
+        "model": "llama",
+        "specificity": "generic",
+        "mean": 0.7040816326530612,
+        "std": 0.5094765220602537,
+        "count": 49
+      },
+      {
+        "model": "llama",
+        "specificity": "precise",
+        "mean": 0.7312918367346939,
+        "std": 0.49279156168232646,
+        "count": 49
+      },
+      {
+        "model": "qwen",
+        "specificity": "generic",
+        "mean": 0.5510204081632653,
+        "std": 0.45922146480918835,
+        "count": 49
+      },
+      {
+        "model": "qwen",
+        "specificity": "precise",
+        "mean": 0.673469387755102,
+        "std": 0.4512831290720206,
+        "count": 49
+      }
+    ]
+  }
+}

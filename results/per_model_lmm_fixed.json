@@ -1,0 +1,193 @@
+{
+  "qwen": {
+    "model": "qwen",
+    "n_obs": 298,
+    "n_samples": 149,
+    "by_cell": [
+      {
+        "domain": "python",
+        "specificity": "generic",
+        "n": 49
+      },
+      {
+        "domain": "python",
+        "specificity": "precise",
+        "n": 49
+      },
+      {
+        "domain": "svg",
+        "specificity": "generic",
+        "n": 100
+      },
+      {
+        "domain": "svg",
+        "specificity": "precise",
+        "n": 100
+      }
+    ],
+    "random_effect_var": 0.7534637460650873,
+    "converged": true,
+    "singular": false,
+    "fit_method": "mixedlm_reml",
+    "summary": "                          Mixed Linear Model Regression Results\n=========================================================================================\nModel:                        MixedLM            Dependent Variable:            reduction\nNo. Observations:             298                Method:                        REML     \nNo. Groups:                   149                Scale:                         0.1003   \nMin. group size:              2                  Log-Likelihood:                -291.5514\nMax. group size:              2                  Converged:                     Yes      \nMean group size:              2.0                                                        \n-----------------------------------------------------------------------------------------\n                                               Coef.  Std.Err.   z    P>|z| [0.025 0.975]\n-----------------------------------------------------------------------------------------\nIntercept                                       0.167    0.092  1.805 0.071 -0.014  0.348\nC(domain, Treatment('svg'))[T.python]           0.384    0.161  2.385 0.017  0.068  0.700\nspec_bin                                       -0.199    0.045 -4.434 0.000 -0.286 -0.111\nspec_bin:C(domain, Treatment('svg'))[T.python]  0.321    0.078  4.110 0.000  0.168  0.474\nGroup Var                                       0.753    0.418                           \n=========================================================================================\n",
+    "coef_table": [
+      {
+        "term": "Intercept",
+        "coef": 0.16678700000000066,
+        "se": 0.09240140885498976,
+        "z": 1.805026590684867,
+        "p": 0.07107052112595498
+      },
+      {
+        "term": "C(domain, Treatment('svg'))[T.python]",
+        "coef": 0.384233408163264,
+        "se": 0.1611289908800829,
+        "z": 2.3846323747488882,
+        "p": 0.0170961960669239
+      },
+      {
+        "term": "spec_bin",
+        "coef": -0.1986100000000011,
+        "se": 0.044796939577076034,
+        "z": -4.43356179853045,
+        "p": 9.268892290668048e-06
+      },
+      {
+        "term": "spec_bin:C(domain, Treatment('svg'))[T.python]",
+        "coef": 0.3210589795918377,
+        "se": 0.07811661919460568,
+        "z": 4.109995835738989,
+        "p": 3.956662526081991e-05
+      },
+      {
+        "term": "Group Var",
+        "coef": 7.509234488300593,
+        "se": 1.3211780959240205,
+        "z": 5.683741284742312,
+        "p": 1.317795823089644e-08
+      }
+    ],
+    "cell_means": [
+      {
+        "domain": "python",
+        "specificity": "generic",
+        "mean": 0.5510204081632653,
+        "std": 0.45922146480918835,
+        "count": 49
+      },
+      {
+        "domain": "python",
+        "specificity": "precise",
+        "mean": 0.673469387755102,
+        "std": 0.4512831290720206,
+        "count": 49
+      },
+      {
+        "domain": "svg",
+        "specificity": "generic",
+        "mean": 0.166787,
+        "std": 1.117168073557765,
+        "count": 100
+      },
+      {
+        "domain": "svg",
+        "specificity": "precise",
+        "mean": -0.031823000000000004,
+        "std": 1.0423455936187207,
+        "count": 100
+      }
+    ]
+  },
+  "llama": {
+    "model": "llama",
+    "n_obs": 298,
+    "n_samples": 149,
+    "by_cell": [
+      {
+        "domain": "python",
+        "specificity": "generic",
+        "n": 49
+      },
+      {
+        "domain": "python",
+        "specificity": "precise",
+        "n": 49
+      },
+      {
+        "domain": "svg",
+        "specificity": "generic",
+        "n": 100
+      },
+      {
+        "domain": "svg",
+        "specificity": "precise",
+        "n": 100
+      }
+    ],
+    "mixedlm_error": "LinAlgError: Singular matrix",
+    "converged": true,
+    "singular": true,
+    "fit_method": "ols_fallback",
+    "summary": "                            OLS Regression Results                            \n==============================================================================\nDep. Variable:              reduction   R-squared:                       0.073\nModel:                            OLS   Adj. R-squared:                  0.064\nMethod:                 Least Squares   F-statistic:                     7.723\nDate:                Sat, 11 Apr 2026   Prob (F-statistic):           5.55e-05\nTime:                        12:20:15   Log-Likelihood:                -225.66\nNo. Observations:                 298   AIC:                             459.3\nDf Residuals:                     294   BIC:                             474.1\nDf Model:                           3                                         \nCovariance Type:            nonrobust                                         \n==================================================================================================================\n                                                     coef    std err          t      P>|t|      [0.025      0.975]\n------------------------------------------------------------------------------------------------------------------\nIntercept                                          0.4141      0.052      7.972      0.000       0.312       0.516\nC(domain, Treatment('svg'))[T.python]              0.2899      0.091      3.201      0.002       0.112       0.468\nspec_bin                                          -0.0085      0.073     -0.115      0.908      -0.153       0.136\nspec_bin:C(domain, Treatment('svg'))[T.python]     0.0357      0.128      0.279      0.781      -0.216       0.288\n==============================================================================\nOmnibus:                      328.701   Durbin-Watson:                   2.013\nProb(Omnibus):                  0.000   Jarque-Bera (JB):            21100.096\nSkew:                          -4.562   Prob(JB):                         0.00\nKurtosis:                      43.201   Cond. No.                         6.32\n==============================================================================\n\nNotes:\n[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.",
+    "coef_table": [
+      {
+        "term": "Intercept",
+        "coef": 0.4141440000000004,
+        "se": 0.051947788958632425,
+        "z": 7.972312360200655,
+        "p": 3.4762275446382183e-14
+      },
+      {
+        "term": "C(domain, Treatment('svg'))[T.python]",
+        "coef": 0.2899376326530604,
+        "se": 0.0905862250054206,
+        "z": 3.2006812584994107,
+        "p": 0.0015211179313476318
+      },
+      {
+        "term": "spec_bin",
+        "coef": -0.008469000000000023,
+        "se": 0.07346526768059322,
+        "z": -0.11527896470507541,
+        "p": 0.9083027052437873
+      },
+      {
+        "term": "spec_bin:C(domain, Treatment('svg'))[T.python]",
+        "coef": 0.03567920408163304,
+        "se": 0.12810826796684655,
+        "z": 0.27850820753322925,
+        "p": 0.7808180484542281
+      }
+    ],
+    "cell_means": [
+      {
+        "domain": "python",
+        "specificity": "generic",
+        "mean": 0.7040816326530612,
+        "std": 0.5094765220602537,
+        "count": 49
+      },
+      {
+        "domain": "python",
+        "specificity": "precise",
+        "mean": 0.7312918367346939,
+        "std": 0.49279156168232646,
+        "count": 49
+      },
+      {
+        "domain": "svg",
+        "specificity": "generic",
+        "mean": 0.414144,
+        "std": 0.3095487400860952,
+        "count": 100
+      },
+      {
+        "domain": "svg",
+        "specificity": "precise",
+        "mean": 0.405675,
+        "std": 0.6796920354881766,
+        "count": 100
+      }
+    ]
+  }
+}

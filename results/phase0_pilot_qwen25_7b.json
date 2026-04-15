@@ -1,0 +1,57 @@
+{
+  "pilot_results": {
+    "svg_nl": {
+      "domain": "svg",
+      "format": "nl",
+      "specificity": "precise",
+      "n_samples": 50,
+      "pass_rate": 1.0,
+      "passed": 50,
+      "avg_diagnostics_after": 2.1,
+      "gen_time_seconds": 664.1,
+      "avg_tokens": 959.7
+    },
+    "svg_hybrid": {
+      "domain": "svg",
+      "format": "hybrid",
+      "specificity": "precise",
+      "n_samples": 50,
+      "pass_rate": 1.0,
+      "passed": 50,
+      "avg_diagnostics_after": 1.34,
+      "gen_time_seconds": 704.1,
+      "avg_tokens": 950.6
+    },
+    "python_nl": {
+      "domain": "python",
+      "format": "nl",
+      "specificity": "precise",
+      "n_samples": 50,
+      "pass_rate": 0.98,
+      "passed": 49,
+      "avg_diagnostics_after": 0.26,
+      "gen_time_seconds": 25.2,
+      "avg_tokens": 100.0
+    },
+    "python_hybrid": {
+      "domain": "python",
+      "format": "hybrid",
+      "specificity": "precise",
+      "n_samples": 50,
+      "pass_rate": 0.96,
+      "passed": 48,
+      "avg_diagnostics_after": 0.2,
+      "gen_time_seconds": 28.9,
+      "avg_tokens": 100.6
+    }
+  },
+  "h3_analysis": {
+    "svg_nl_pass_rate": 1.0,
+    "svg_hybrid_pass_rate": 1.0,
+    "svg_delta_nl_minus_hybrid": 0.0,
+    "python_nl_pass_rate": 0.98,
+    "python_hybrid_pass_rate": 0.96,
+    "python_delta_hybrid_minus_nl": -0.02,
+    "h3_decision": "H3_DROPPED: no significant format×domain interaction — drop from confirmatory hypotheses"
+  }
+}

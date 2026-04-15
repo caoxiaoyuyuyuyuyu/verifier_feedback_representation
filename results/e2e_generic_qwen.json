@@ -1,0 +1,100 @@
+{
+  "specificity": "generic",
+  "format": "nl",
+  "n_samples": 10,
+  "passed": 10,
+  "pass_rate": 1.0,
+  "gen_time_s": 132.9,
+  "samples": [
+    {
+      "index": 0,
+      "diags_before": 1,
+      "diags_after": 1,
+      "errors_after": 0,
+      "passed": true,
+      "feedback_preview": "Found 1 issue(s):\n1. [WARNING] Low viewBox coverage detected",
+      "output_preview": "```svg\n<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1024 1024\" width=\"200\" height=\"200\"><path d=\"M725.350639 245.330127c0 29.438105 23.891795 53.3299 53.3299 53.3299s53.3299-23.891795 53.3299-53.3299-23.891795-53.3299-53.3299-53.3299S725.350639 215.913354 725.350639 245.330127zM352.446645 99"
+    },
+    {
+      "index": 1,
+      "diags_before": 1,
+      "diags_after": 1,
+      "errors_after": 0,
+      "passed": true,
+      "feedback_preview": "Found 1 issue(s):\n1. [WARNING] Low viewBox coverage detected",
+      "output_preview": "```svg\n<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1024 1024\" width=\"200\" height=\"200\"><path d=\"M664.77 429l-27.39-90.22h-88v-75h66.08l70.92 39.09 28.19-50.5-76.87-42.17H398.86v53.58h75v75H385l-25.3 90.32-61.79 63.73v358.5l65.65 67.71H661l65.65-67.71V492.84z m45.46 415.68l-31.13 32.16H519.5"
+    },
+    {
+      "index": 2,
+      "diags_before": 2,
+      "diags_after": 1,
+      "errors_after": 0,
+      "passed": true,
+      "feedback_preview": "Found 2 issue(s):\n1. [WARNING] Low viewBox coverage detected\n\n2. [INFO] Element is disproportionately small",
+      "output_preview": "```svg\n<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 512 512\" width=\"200\" height=\"200\"><path d=\"M224 85.333333a21.333333 21.333333 0 0 1 21.333333-21.333333h170.666667a21.333333 21.333333 0 0 1 21.333333 21.333333v170.666667a21.333333 21.333333 0 0 1-21.333333 21.333333h-170.666667a21.333333 "
+    },
+    {
+      "index": 3,
+      "diags_before": 3,
+      "diags_after": 2,
+      "errors_after": 0,
+      "passed": true,
+      "feedback_preview": "Found 3 issue(s):\n1. [WARNING] Low viewBox coverage detected\n\n2. [INFO] Element is disproportionately small\n\n3. [INFO] Element is disproportionately small",
+      "output_preview": "```svg\n<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1024 1024\" width=\"512\" height=\"512\"><path d=\"M176.853333 560.426667h670.506667v42.666666H176.853333z\" fill=\"#2FDDDC\" /><path d=\"M490.666667 729.6h42.666666V853.333333h-42.666666z\" fill=\"#5879FB\" /><path d=\"M359.893333 832h304.213334v42.6666"
+    },
+    {
+      "index": 4,
+      "diags_before": 1,
+      "diags_after": 1,
+      "errors_after": 0,
+      "passed": true,
+      "feedback_preview": "Found 1 issue(s):\n1. [WARNING] Low viewBox coverage detected",
+      "output_preview": "```svg\n<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1024 1024\" width=\"200\" height=\"200\"><path d=\"M554.666667 599.978667V938.666667H170.666667a341.333333 341.333333 0 0 1 384-338.688zM512 554.666667c-141.44 0-256-114.56-256-256s114.56-256 256-256 256 114.56 256 256-114.56 256-256 256z m247.16"
+    },
+    {
+      "index": 5,
+      "diags_before": 1,
+      "diags_after": 1,
+      "errors_after": 0,
+      "passed": true,
+      "feedback_preview": "Found 1 issue(s):\n1. [WARNING] Low viewBox coverage detected",
+      "output_preview": "```svg\n<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1024 1024\" width=\"200\" height=\"200\"><path d=\"M512 56.889344c251.35104 0 455.110656 203.759616 455.110656 455.110656S763.35104 967.110656 512 967.110656 56.889344 763.35104 56.889344 512 260.64896 56.889344 512 56.889344z m28.444672 341.3329"
+    },
+    {
+      "index": 6,
+      "diags_before": 1,
+      "diags_after": 1,
+      "errors_after": 0,
+      "passed": true,
+      "feedback_preview": "Found 1 issue(s):\n1. [WARNING] Low viewBox coverage detected",
+      "output_preview": "```svg\n<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1024 1024\" width=\"200\" height=\"200\"><path d=\"M623.5 256.878c104.106 0 188.5 84.394 188.5 188.5 0 74.668-43.415 139.197-106.38 169.719C821.53 654.185 905 764.258 905 893.877c0 18.778-15.222 34-34 34-18.59 0-33.695-14.919-33.995-33.437l-0.005"
+    },
+    {
+      "index": 7,
+      "diags_before": 10,
+      "diags_after": 10,
+      "errors_after": 0,
+      "passed": true,
+      "feedback_preview": "Found 10 issue(s):\n1. [WARNING] Low viewBox coverage detected\n\n2. [WARNING] Element overlap detected\n\n3. [WARNING] Element overlap detected\n\n4. [INFO] Element is disproportionately small\n\n5. [INFO] El",
+      "output_preview": "```svg\n<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1024 1024\" width=\"200\" height=\"200\">\n    <path d=\"M558.053 749.726l52.354-130.465L769.811 539v-62.477c-122.568 0-225.886 84.168-257.55 198.992C480.602 560.69 377.284 476.523 254.716 476.523V539l159.403 80.261 43.962 130.465h99.973z\" fill=\"#"
+    },
+    {
+      "index": 8,
+      "diags_before": 6,
+      "diags_after": 2,
+      "errors_after": 0,
+      "passed": true,
+      "feedback_preview": "Found 6 issue(s):\n1. [WARNING] Low viewBox coverage detected\n\n2. [WARNING] Element overlap detected\n\n3. [WARNING] Element overlap detected\n\n4. [INFO] Element is disproportionately small\n\n5. [INFO] Ele",
+      "output_preview": "```svg\n<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1024 1024\" width=\"1024\" height=\"1024\">\n<path d=\"M512 320m-160 0a160 160 0 1 0 320 0 160 160 0 1 0-320 0Z\" fill=\"#FAFAFA\" />\n<path d=\"M512 512C406.144 512 320 425.856 320 320s86.144-192 192-192 192 86.144 192 192-86.144 192-192 192z m0-320c-"
+    },
+    {
+      "index": 9,
+      "diags_before": 1,
+      "diags_after": 1,
+      "errors_after": 0,
+      "passed": true,
+      "feedback_preview": "Found 1 issue(s):\n1. [WARNING] Low viewBox coverage detected",
+      "output_preview": "```svg\n<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1024 1024\" width=\"200\" height=\"200\"><path d=\"M605.2 687.4H240.1c-46 0-83.7-37.7-83.7-83.7v-365c0-46 37.7-83.7 83.7-83.7h365.1c46 0 83.7 37.7 83.7 83.7v365.1c0 46-37.7 83.6-83.7 83.6z\" fill=\"#06CC76\" opacity=\".6\" /><path d=\"M784.4 870.7H419."
+    }
+  ]
+}
